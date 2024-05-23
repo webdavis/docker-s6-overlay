@@ -13,7 +13,7 @@ jobs:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v4
 
-      - name: Install newer version of Bash on macOS
+      - name: Install Bash version 5.x on macOS to improve script stability
         shell: bash
         run: |
           brew install bash
