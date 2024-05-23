@@ -17,12 +17,12 @@ jobs:
       - name: Check the current version of Bash on Ubuntu 24.04
         run: bash --version
 
-      # - name: Install Bash version 5.x on macOS to improve script stability, as well as Just
-      #   shell: bash
-      #   run: |
-      #     apt-get install -y bash just
-      #     echo "PATH=${BREW_BASH_PATH}:$PATH" >> $GITHUB_ENV
-      #
+      - name: Install Just so that justfile shortcuts are supported
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y just
+
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v3
       #
