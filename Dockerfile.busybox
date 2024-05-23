@@ -27,11 +27,9 @@ ARG S6_OVERLAY_ARCHITECTURE
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz /tmp/
 
-# Create a directory to extract the tarballs.
-RUN mkdir -p /s6-overlay
-
 RUN apk --no-cache update \
     && apk add xz \
+    && mkdir -p /s6-overlay \
     && tar -C /s6-overlay -Jxpf /tmp/s6-overlay-noarch.tar.xz \
     && tar -C /s6-overlay -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz
 
