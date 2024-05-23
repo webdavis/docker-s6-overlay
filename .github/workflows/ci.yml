@@ -3,19 +3,45 @@ name: Build and Test Images
 on: [push, pull_request]
 
 jobs:
-  build:
+  generate-matrix:
     runs-on: ubuntu-24.04
 
-    env:
-      BREW_BASH_PATH: /usr/local/bin/bash
-      REPO_ADDRESS: webdavis/docker-s6-overlay
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
     steps:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v4
 
-      - name: Check the current version of Bash on Ubuntu 24.04
-        run: bash --version
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate the matrix
+        run: |
+          pip install jq
+          python scripts/generate_matrix.py
+
+
+      - name: Verify matrix.json
+        run: |
+          cat matrix.json | jq -c .
+          jq empty matrix.json
+
+      - name: Save the matrix strategy
+        id: set-matrix
+        run: echo "matrix=$(cat matrix.json | jq -c .)" >> $GITHUB_OUTPUT
+
+  build:
+    needs: generate-matrix
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout the repository to the runner
+        uses: actions/checkout@v4
 
       - name: Install Just so that justfile shortcuts are supported
         shell: bash
@@ -23,13 +49,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y just
 
-      - name: Set up Docker Buildx
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Alpine Docker Image using build script
+      - name: Build the Docker Images
         run: |
           docker buildx create --use
-          ./scripts/build_image.sh -p "linux/amd64" -i "alpine" -v "3.19" -a "x86_64"
+          ./scripts/build_image.sh \
+              -p ${{ matrix.platform }} \
+              -i ${{ matrix.image }} \
+              -v ${{ matrix.image_version }} \
+              -a ${{ matrix.s6_architecture }}
 
-      - name: Print Docker Images
+      - name: Print the Docker Images (for logging purposes)
         run: just list-local-image-architectures

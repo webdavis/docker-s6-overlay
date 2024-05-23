@@ -20,14 +20,14 @@ All of the following flags must be specified:
     -a|--s6-overlay-architecture <s6_overlay_architecture>  The architecture of the s6 overlay tarball. See s6_architecture_mappings.json
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a 3.1.6.2
+    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64
 
 Example using long flags:
-    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture 3.1.6.2"
+    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64"
 }
 
 verify_script_arguments() {
-  if (( $# != 8 )); then
+  if [[ -z "$DOCKER_PLATFORM" || -z "$IMAGE" || -z "$IMAGE_VERSION" || -z "$S6_OVERLAY_ARCHITECTURE" ]]; then
     printf "%s\\n" "
 ${SCRIPT_NAME}: Invalid usage
 
@@ -39,10 +39,10 @@ You must specify the following flags:
     -a <s6_overlay_architecture> (or --s6-overlay-architecture <s6_overlay_architecture>)
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a 3.1.6.2
+    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64
 
 Example using long flags:
-    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture 3.1.6.2
+    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64
 " >&2
   exit 1
   fi
