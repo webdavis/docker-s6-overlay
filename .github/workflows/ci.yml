@@ -6,10 +6,18 @@ jobs:
   build:
     runs-on: macos-14
 
+    env:
+      BREW_BASH_PATH: /usr/local/bin/bash
+
     steps:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v4
 
-      - name: Check version of Bash
+      - name: Install newer version of Bash on macOS
         shell: bash
+        run: |
+          brew install bash
+          echo "PATH=${BREW_BASH_PATH}:$PATH" >> $GITHUB_ENV
+
+      - name: Check the version of Bash
         run: bash --version
