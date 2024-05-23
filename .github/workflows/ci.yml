@@ -8,20 +8,32 @@ jobs:
 
     env:
       BREW_BASH_PATH: /usr/local/bin/bash
+      REPO_ADDRESS: webdavis/docker-s6-overlay
 
     steps:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v4
 
-      - name: Install Bash version 5.x on macOS to improve script stability
+      - name: Install Bash version 5.x on macOS to improve script stability, as well as Just
         shell: bash
         run: |
-          brew install bash
+          brew install bash just
           echo "PATH=${BREW_BASH_PATH}:$PATH" >> $GITHUB_ENV
 
-      - name: Check the version of Bash
-        run: bash --version
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Check that the GitHub Actions 'shell' instruction uses the updated Bash
-        shell: bash
-        run: echo "This is another test script running in Bash version $BASH_VERSION"
+      - name: Test Docker Buildx
+        run: |
+          docker buildx create --use
+          docker buildx build \
+            --load \
+            --platform "linux/amd64" \
+            --build-arg IMAGE_VERSION="3.19" \
+            --build-arg S6_OVERLAY_VERSION="3.1.6.2" \
+            --build-arg S6_OVERLAY_ARCHITECTURE="x86_64" \
+            --tag "${REPO_ADDRESS}:alpine-3.19-x86_64-3.1.6.2" \
+            -f "Dockerfile.alpine" .
+
+      - name: Print Docker Images
+        run: just list-local-image-architectures
