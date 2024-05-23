@@ -21,3 +21,7 @@ jobs:
 
       - name: Check the version of Bash
         run: bash --version
+
+      - name: Check that the GitHub Actions 'shell' instruction uses the updated Bash
+        shell: bash
+        run: echo "This is another test script running in Bash version $BASH_VERSION"
