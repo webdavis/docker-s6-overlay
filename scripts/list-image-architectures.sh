@@ -65,7 +65,7 @@ list_local_architectures() {
 }
 
 list_remote_architectures() {
-  local image manifest architectures formatted_architectures
+  local image manifest architectures os arch variant formatted_architectures
 
   for image in $IMAGES; do
 
@@ -76,11 +76,24 @@ list_remote_architectures() {
       continue
     fi
 
-    architectures="$(echo "$manifest" | jq -r '.manifests[] | .platform.architecture')"
+    architectures=""
+    while IFS= read -r entry; do
+      os="$(echo "$entry" | jq -r '.platform.os')"
+      arch="$(echo "$entry" | jq -r '.platform.architecture')"
+      variant="$(echo "$entry" | jq -r '.platform.variant // empty')"
+
+      if [[ -n $variant ]]; then
+        architectures+="${os}/${arch}/${variant} "
+      else
+        architectures+="${os}/${arch} "
+      fi
+    done <<< "$(echo "$manifest" | jq -c '.manifests[]')"
+
     formatted_architectures="$(echo "$architectures" | grep -v 'unknown' | tr '\n' ' ')"
 
-    echo "Supported Architectures for $image: $formatted_architectures"
+    output+="$image\t$formatted_architectures\n"
   done
+  echo -e "$output" | column -t -s $'\t'
 }
 
 main() {
