@@ -1,4 +1,4 @@
-name: Build and Test Images
+name: CI - Build and Test Images
 on: [push, pull_request]
 
 jobs:
@@ -21,7 +21,6 @@ jobs:
         run: |
           pip install jq
           python scripts/generate_matrix.py
-
 
       - name: Verify matrix.json
         run: |
@@ -74,6 +73,7 @@ jobs:
         with:
           name: ${{ matrix.image }}_${{ matrix.image_version }}_${{ matrix.s6_architecture }}
           path: ${{ matrix.image }}_${{ matrix.image_version }}_${{ matrix.s6_architecture }}.tar
+          retention-days: 30
 
       - name: Print the Docker Images (for logging purposes)
         run: just list-local-image-architectures

@@ -1,0 +1,59 @@
+name: Deploy Images to Docker Hub
+
+on:
+  repository_dispatch:
+    types: [my-event]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout the repository to the runner
+        uses: actions/checkout@v4
+
+      - name: Download artifacts info
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts-info
+          path: .
+
+      - name: Parse artifacts info
+        id: parse
+        run: |
+          artifacts=$(jq -r '.artifacts' artifacts_info.json)
+          run_id=$(jq -r '.run_id' artifacts_info.json)
+          echo "Artifacts: $artifacts"
+          echo "Run ID: $run_id"
+          echo "::set-output name=artifacts::${artifacts}"
+          echo "::set-output name=run_id::${run_id}"
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Download all Docker image artifacts
+        run: |
+          artifacts="${{ steps.parse.outputs.artifacts }}"
+          run_id="${{ steps.parse.outputs.run_id }}"
+          echo "$artifacts" | tr ' ' '\n' | while read -r artifact; do
+            echo "Downloading $artifact"
+            artifact_id=$(gh api -H "Accept: application/vnd.github.v3+json" /repos/${{ github.repository }}/actions/runs/$run_id/artifacts | jq -r ".artifacts[] | select(.name==\"$artifact\") | .id")
+            gh api -H "Accept: application/vnd.github.v3+json" /repos/${{ github.repository }}/actions/artifacts/$artifact_id/archive -o ./images/$artifact.zip
+            unzip ./images/$artifact.zip -d ./images
+            rm ./images/$artifact.zip
+          done
+
+      # - name: Install Just so that justfile shortcuts are supported
+      #   shell: bash
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y just
+      #
+      # - name: Load Docker images from tarballs
+      #   run: |
+      #     for image_tar in ./images/*.tar; do
+      #       docker load -i "$image_tar"
+      #     done
+      #
+      # - name: Verify Docker images are available to be pushed
+      #   run: just list-local-image-architectures

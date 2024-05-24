@@ -58,7 +58,7 @@ load_s6_overlay_version() {
 }
 
 parse_command_line_arguments() {
-  local short='p:i:v:a:hs'
+  local short='p:i:v:a:sh'
   local long='platform:,image:,image-version:,s6-overlay-architecture:,save,help'
 
   SAVE='false'
