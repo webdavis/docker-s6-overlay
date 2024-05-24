@@ -28,12 +28,12 @@ get_repo_root_directory() {
 
 load_s6_architecture_mappings() {
   declare -gA S6_ARCHITECTURE_MAPPINGS
-  declare -gA DOCKER_PLATFORM_MAPPINGS
+  declare -gA PLATFORM_MAPPINGS
 
-  while IFS="=" read -r key s6_overlay_architecture docker_platform; do
+  while IFS="=" read -r key s6_overlay_architecture platform; do
     S6_ARCHITECTURE_MAPPINGS["$key"]="$s6_overlay_architecture"
-    DOCKER_PLATFORM_MAPPINGS["$key"]="$docker_platform"
-  done < <(jq -r 'to_entries | .[] | "\(.key)=\(.value.s6_architecture)=\(.value.docker_platform)"' "$S6_ARCHITECTURE_MAPPINGS_FILE")
+    PLATFORM_MAPPINGS["$key"]="$platform"
+  done < <(jq -r 'to_entries | .[] | "\(.key)=\(.value.s6_architecture)=\(.value.platform)"' "$S6_ARCHITECTURE_MAPPINGS_FILE")
 }
 
 parse_command_line_arguments() {
@@ -78,9 +78,9 @@ process_images() {
       image_version=$(tr -d '"' <<< "$image_version")
       for arch in $architectures; do
         arch=$(tr -d '"' <<< "$arch")
-        docker_platform=${DOCKER_PLATFORM_MAPPINGS[$arch]}
+        platform=${PLATFORM_MAPPINGS[$arch]}
         s6_overlay_architecture=${S6_ARCHITECTURE_MAPPINGS[$arch]}
-        echo "$docker_platform $image $image_version $s6_overlay_architecture"
+        echo "$platform $image $image_version $s6_overlay_architecture"
       done
     done
 }
@@ -90,7 +90,6 @@ build_images_in_parallel() {
     process_images | parallel --colsep ' ' ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}" -u
     return 0
   fi
-
   process_images | parallel --colsep ' ' ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}"
 }
 
