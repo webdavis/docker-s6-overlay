@@ -3,7 +3,9 @@ default:
 
 alias L := docker-image-ls
 alias P := docker-ps
+alias B := bootstrap-docker-builder
 alias b := build-images-in-parallel
+alias p := push-images-in-parallel
 alias l := list-local-image-architectures
 alias r := list-remote-image-architectures
 alias c := clean
@@ -14,8 +16,15 @@ docker-image-ls:
 docker-ps:
     sudo docker ps -a
 
+bootstrap-docker-builder:
+    docker buildx create --use --name mybuilder
+    docker buildx inspect mybuilder --bootstrap
+
 build-images-in-parallel:
     ./scripts/run_parallel_builds.sh
+
+push-images-in-parallel:
+    ./scripts/run_parallel_builds.sh --push
 
 list-local-image-architectures:
     ./scripts/list-image-architectures.sh -l

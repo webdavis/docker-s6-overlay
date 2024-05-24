@@ -34,16 +34,11 @@ jobs:
       - name: Setup QEMU virtualization for multi-platform builds
         uses: docker/setup-qemu-action@v3
 
-      - name: Create a new Docker builder instance
-        run: |
-          docker buildx create --use --name mybuilder
-          docker buildx inspect mybuilder --bootstrap
+      - name: Bootstrap a new Docker builder instance
+        run: just bootstrap-docker-builder
 
       - name: Build and push the Docker Images
-        run: ./scripts/run_parallel_builds.sh --push
+        run: just push-images-in-parallel
 
       - name: Verify remote image architectures using image manifests
         run: just list-remote-image-architectures
-
-      - name: List the Docker Images
-        run: docker image ls -a --format '{{.Repository}}:{{.Tag}}'
