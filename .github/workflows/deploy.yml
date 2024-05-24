@@ -41,3 +41,9 @@ jobs:
 
       - name: Build and push the Docker Images
         run: ./scripts/run_parallel_builds.sh --push
+
+      - name: Verify remote image architectures using image manifests
+        run: just list-remote-image-architectures
+
+      - name: List the Docker Images
+        run: docker image ls -a --format '{{.Repository}}:{{.Tag}}'
