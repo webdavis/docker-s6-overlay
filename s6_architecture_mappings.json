@@ -1,0 +1,18 @@
+{
+  "amd64": {
+    "platform": "linux/amd64",
+    "s6_architecture": "x86_64"
+  },
+  "arm64": {
+    "platform": "linux/arm64",
+    "s6_architecture": "aarch64"
+  },
+  "armv7": {
+    "platform": "linux/arm/v7",
+    "s6_architecture": "arm"
+  },
+  "armv6": {
+    "platform": "linux/arm/v6",
+    "s6_architecture": "armhf"
+  }
+}

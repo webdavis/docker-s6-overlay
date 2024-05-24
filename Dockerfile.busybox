@@ -1,0 +1,42 @@
+# Description: Runs s6 as PID 1.
+# See: https://github.com/just-containers/s6-overlay
+#
+# Run the following commands in the folder where the Dockerfile is located.
+#
+# Build the image:
+#
+#   $ sudo docker buildx build --load --platform linux/amd64 --force-rm --tag webdavis/alpine:s6-amd64 .
+#
+# Run the container:
+#
+#   $ sudo docker run --platform linux/amd64 -d -t \
+#           --hostname alpine \
+#           --name alpine_s6_amd64 \
+#           webdavis/alpine:s6-amd64
+#
+# Enter the container:
+#
+#   $ sudo docker exec -ti alpine_s6_amd64 /init /bin/sh -l
+
+FROM alpine:latest as builder
+LABEL maintainer "Stephen A. Davis (webdavis)"
+
+ARG S6_OVERLAY_VERSION
+ARG S6_OVERLAY_ARCHITECTURE
+
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz /tmp/
+
+RUN apk --no-cache update \
+    && apk add xz \
+    && mkdir -p /s6-overlay \
+    && tar -C /s6-overlay -Jxpf /tmp/s6-overlay-noarch.tar.xz \
+    && tar -C /s6-overlay -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz
+
+FROM busybox:latest
+
+COPY --from=builder /s6-overlay/ /
+
+COPY etc/ /
+
+ENTRYPOINT ["/init"]

@@ -1,0 +1,86 @@
+{
+  "busybox": [
+    {
+      "version": "1.36",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7",
+        "armv6"
+      ]
+    },
+    {
+      "version": "1.36-musl",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7",
+        "armv6"
+      ]
+    },
+    {
+      "version": "1.36-glibc",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7"
+      ]
+    },
+    {
+      "version": "1.36-uclibc",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7"
+      ]
+    }
+  ],
+  "alpine": [
+    {
+      "version": "3.19",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7",
+        "armv6"
+      ]
+    },
+    {
+      "version": "3.18",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7",
+        "armv6"
+      ]
+    }
+  ],
+  "ubuntu": [
+    {
+      "version": "24.04",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7"
+      ]
+    }
+  ],
+  "debian": [
+    {
+      "version": "12",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7"
+      ]
+    },
+    {
+      "version": "12-slim",
+      "architectures": [
+        "amd64",
+        "arm64",
+        "armv7"
+      ]
+    }
+  ]
+}
