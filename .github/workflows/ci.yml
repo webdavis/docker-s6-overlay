@@ -1,5 +1,6 @@
 name: CI - Build and Test Images
-on: [push, pull_request]
+
+on: [push]
 
 jobs:
   generate-matrix:
