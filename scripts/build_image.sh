@@ -124,7 +124,10 @@ build_image() {
 }
 
 save_image() {
-  ${DOCKER_CMD} save "$IMAGE_TAG" -o "${IMAGE}_${IMAGE_VERSION}_${S6_OVERLAY_ARCHITECTURE}.tar"
+  local tarball="${IMAGE}_${IMAGE_VERSION}_${S6_OVERLAY_ARCHITECTURE}.tar"
+
+  ${DOCKER_CMD} save "$IMAGE_TAG" -o "$tarball"
+  chmod -R 755 "$tarball"
 }
 
 push_image() {

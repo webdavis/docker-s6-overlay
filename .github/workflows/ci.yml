@@ -54,7 +54,7 @@ jobs:
       - name: Setup QEMU virtualization for multi-platform builds
         uses: docker/setup-qemu-action@v3
 
-      - name: Build the Docker Images
+      - name: Build the Docker Images and then save them as tarballs
         run: |
           docker buildx create --use
           ./scripts/build_image.sh \
@@ -63,9 +63,6 @@ jobs:
               -v ${{ matrix.image_version }} \
               -a ${{ matrix.s6_architecture }} \
               --save
-
-      - name: Set correct permissions for the artifacts
-        run: sudo chmod -R 755 ./*.tar
 
       - name: Upload Docker Images as Artifacts
         uses: actions/upload-artifact@v4
