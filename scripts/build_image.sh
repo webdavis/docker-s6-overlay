@@ -18,12 +18,13 @@ All of the following flags must be specified:
     -i|--image <image>                                      The name of the official base image
     -v|--image-version <image_version>                      The version of the official base image
     -a|--s6-overlay-architecture <s6_overlay_architecture>  The architecture of the s6 overlay tarball. See s6_architecture_mappings.json
+    -s|--save                                               Save the built docker image as a tarball
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64
+    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64 --save
 
 Example using long flags:
-    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64"
+    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64 --save"
 }
 
 verify_script_arguments() {
@@ -57,8 +58,10 @@ load_s6_overlay_version() {
 }
 
 parse_command_line_arguments() {
-  local short='p:i:v:a:h'
-  local long='platform:,image:,image-version:,s6-overlay-architecture:,help'
+  local short='p:i:v:a:hs'
+  local long='platform:,image:,image-version:,s6-overlay-architecture:,save,help'
+
+  SAVE='false'
 
   OPTIONS="$(getopt -o "$short" --long "$long" -- "$@")"
   eval set -- "$OPTIONS"
@@ -81,6 +84,10 @@ parse_command_line_arguments() {
         S6_OVERLAY_ARCHITECTURE="$2"
         shift 2
         ;;
+      -s | --save)
+        SAVE="true"
+        shift 1
+        ;;
       -h | --help)
         help
         exit 0
@@ -101,14 +108,20 @@ parse_command_line_arguments() {
 
 build_image() {
   # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
+  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
+
   ${DOCKER_CMD} buildx build \
     --load \
     --platform "${DOCKER_PLATFORM}" \
     --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
     --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
     --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
-    --tag "${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}" \
+    --tag "$IMAGE_TAG" \
     -f "Dockerfile.$IMAGE" .
+}
+
+save_image() {
+  ${DOCKER_CMD} save "$IMAGE_TAG" -o "${IMAGE}_${IMAGE_VERSION}_${S6_OVERLAY_ARCHITECTURE}.tar"
 }
 
 main() {
@@ -116,6 +129,10 @@ main() {
   load_s6_overlay_version
   parse_command_line_arguments "$@"
   build_image
+
+  if [[ $SAVE == 'true' ]]; then
+    save_image
+  fi
 }
 
 main "$@"
