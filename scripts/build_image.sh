@@ -28,6 +28,14 @@ Example using long flags:
     ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64 --save --push"
 }
 
+get_repo_root_directory() {
+  git rev-parse --show-toplevel
+}
+
+load_s6_overlay_version() {
+  S6_OVERLAY_VERSION="$(jq -r 'values[]' "$S6_OVERLAY_VERSION_FILE")"
+}
+
 verify_script_arguments() {
   if [[ -z "$DOCKER_PLATFORM" || -z "$IMAGE" || -z "$IMAGE_VERSION" || -z "$S6_OVERLAY_ARCHITECTURE" ]]; then
     printf "%s\\n" "
@@ -48,14 +56,6 @@ Example using long flags:
 " >&2
   exit 1
   fi
-}
-
-get_repo_root_directory() {
-  git rev-parse --show-toplevel
-}
-
-load_s6_overlay_version() {
-  S6_OVERLAY_VERSION="$(jq -r 'values[]' "$S6_OVERLAY_VERSION_FILE")"
 }
 
 parse_command_line_arguments() {
