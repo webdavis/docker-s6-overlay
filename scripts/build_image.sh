@@ -135,7 +135,7 @@ push_image() {
 }
 
 push_manifest() {
-  ${DOCKER_CMD} manifest create "$IMAGE_TAG"
+  ${DOCKER_CMD} manifest create "$IMAGE_TAG" "$IMAGE_TAG"
 
   IFS="/" read -r os arch variant <<< "$DOCKER_PLATFORM"
 
