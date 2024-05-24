@@ -19,7 +19,7 @@ All of the following flags must be specified:
     -v|--image-version <image_version>                      The version of the official base image
     -a|--s6-overlay-architecture <s6_overlay_architecture>  The architecture of the s6 overlay tarball. See s6_architecture_mappings.json
     -s|--save                                               Save the built docker image as a tarball
-    -u|--push                                               Push the built docker image upstream
+    -u|--push                                               Push the built docker image and manifest upstream
 
 Example using short flags:
     ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64 -s -u
