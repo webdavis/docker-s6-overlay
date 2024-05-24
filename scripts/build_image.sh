@@ -139,15 +139,12 @@ push_manifest() {
 
   IFS="/" read -r os arch variant <<< "$DOCKER_PLATFORM"
 
-  local annotate_arguments
-
   if [[ -n $variant ]]; then
-    annotate_arguments="--arch $arch --variant $variant"
+    ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" --os "$os" --arch "$arch" --variant "$variant"
   else
-    annotate_arguments="--arch $arch"
+    ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" --os "$os" --arch "$arch"
   fi
 
-  ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" --os "$os" "$annotate_arguments"
   ${DOCKER_CMD} manifest push "$IMAGE_TAG"
 }
 
