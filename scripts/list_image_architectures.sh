@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+IMAGE_IGNORE_LIST='moby/buildkit\|none\|tonistiigi/binfmt'
+
 function parse_command_line_arguments() {
   local short='lr'
   local long='local,remote'
@@ -43,9 +45,8 @@ function parse_command_line_arguments() {
 }
 
 get_images() {
-  image_ignore_list='moby/buildkit\|none'
   # Get a list of all image names on the system in repo:tag format.
-  IMAGES="$(docker image ls -a --format '{{.Repository}}:{{.Tag}}' | grep -v "$image_ignore_list")"
+  IMAGES="$(docker image ls -a --format '{{.Repository}}:{{.Tag}}' | grep -v "$IMAGE_IGNORE_LIST")"
 
   if [[ $IMAGES == '' ]]; then
     echo 'No images have been created.'
