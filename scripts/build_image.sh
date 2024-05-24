@@ -59,7 +59,7 @@ load_s6_overlay_version() {
 }
 
 parse_command_line_arguments() {
-  local short='p:i:v:a:suh'
+  local short='p:i:v:a:such'
   local long='platform:,image:,image-version:,s6-overlay-architecture:,save,push,help'
 
   SAVE='false'
@@ -117,7 +117,6 @@ build_image() {
   IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
 
   BUILD_CMD="${DOCKER_CMD} buildx build \
-      --load \
       --platform \"${DOCKER_PLATFORM}\" \
       --build-arg IMAGE_VERSION=\"${IMAGE_VERSION}\" \
       --build-arg S6_OVERLAY_VERSION=\"${S6_OVERLAY_VERSION}\" \
@@ -127,6 +126,8 @@ build_image() {
 
   if [[ $PUSH == 'true' ]]; then
     BUILD_CMD+=' --push'
+  else
+    BUILD_CMD+=' --load'
   fi
 
   eval "$BUILD_CMD"

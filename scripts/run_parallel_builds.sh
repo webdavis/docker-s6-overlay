@@ -90,13 +90,15 @@ build_images_in_parallel() {
     process_images | parallel --colsep ' ' ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}" -u
     return 0
   fi
+
   process_images | parallel --colsep ' ' ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}"
 }
 
 main() {
   cd "$(get_repo_root_directory)" || exit 1
   load_s6_architecture_mappings
+  parse_command_line_arguments "$@"
   build_images_in_parallel
 }
 
-main
+main "$@"
