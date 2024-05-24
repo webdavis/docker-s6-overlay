@@ -103,7 +103,7 @@ parse_command_line_arguments() {
         break
         ;;
       *)
-        echo "Invalid option: $1"
+        echo "Invalid option: $1" >&2
         exit 1
         ;;
     esac
