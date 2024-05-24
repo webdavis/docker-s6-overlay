@@ -134,6 +134,23 @@ push_image() {
   ${DOCKER_CMD} push "$IMAGE_TAG"
 }
 
+push_manifest() {
+  ${DOCKER_CMD} manifest create "$IMAGE_TAG"
+
+  IFS="/" read -r os arch variant <<< "$DOCKER_PLATFORM"
+
+  local annotate_arguments
+
+  if [[ -n $variant ]]; then
+    annotate_arguments="--arch $arch --variant $variant"
+  else
+    annotate_arguments="--arch $arch"
+  fi
+
+  ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" --os "$os" "$annotate_arguments"
+  ${DOCKER_CMD} manifest push "$IMAGE_TAG"
+}
+
 main() {
   cd "$(get_repo_root_directory)" || exit 1
   load_s6_overlay_version
@@ -150,6 +167,7 @@ main() {
 
   if [[ $PUSH == 'true' ]]; then
     push_image
+    push_manifest
   fi
 }
 
