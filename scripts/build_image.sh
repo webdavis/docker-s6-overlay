@@ -3,7 +3,7 @@
 # Exit immediately if a command fails.
 set -eo pipefail
 
-DOCKER_CMD='sudo docker'
+DOCKER_CMD='docker'
 REPO_ADDRESS="webdavis/docker-s6-overlay"
 S6_OVERLAY_VERSION_FILE='s6_overlay_version.json'
 SCRIPT_NAME="${BASH_SOURCE##*/}"
