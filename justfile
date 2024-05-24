@@ -27,10 +27,10 @@ push-images-in-parallel:
     ./scripts/run_parallel_builds.sh --push
 
 list-local-image-architectures:
-    ./scripts/list-image-architectures.sh -l
+    ./scripts/list_image_architectures.sh -l
 
 list-remote-image-architectures:
-    ./scripts/list-image-architectures.sh -r
+    ./scripts/list_image_architectures.sh -r
 
 clean:
     ./scripts/clean.sh
