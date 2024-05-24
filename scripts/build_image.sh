@@ -22,10 +22,10 @@ All of the following flags must be specified:
     -u|--push                                               Push the built docker image upstream
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64 --save
+    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64 -s -u
 
 Example using long flags:
-    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64 --save"
+    ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64 --save --push"
 }
 
 verify_script_arguments() {
