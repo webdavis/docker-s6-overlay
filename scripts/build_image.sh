@@ -113,38 +113,40 @@ parse_command_line_arguments() {
 }
 
 build_image() {
-  # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
-  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
-
-  BUILD_CMD="${DOCKER_CMD} buildx build \
-      --platform \"${DOCKER_PLATFORM}\" \
-      --build-arg IMAGE_VERSION=\"${IMAGE_VERSION}\" \
-      --build-arg S6_OVERLAY_VERSION=\"${S6_OVERLAY_VERSION}\" \
-      --build-arg S6_OVERLAY_ARCHITECTURE=\"${S6_OVERLAY_ARCHITECTURE}\" \
-      --tag \"$IMAGE_TAG\" \
-      -f \"Dockerfile.$IMAGE\" ."
-
-  if [[ $PUSH == 'true' ]]; then
-    BUILD_CMD+=' --push'
-  else
-    BUILD_CMD+=' --load'
-  fi
-
-  eval "$BUILD_CMD"
+  ${DOCKER_CMD} buildx build \
+      --load \
+      --platform "${DOCKER_PLATFORM}" \
+      --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
+      --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
+      --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
+      --tag "$IMAGE_TAG" \
+      -f "Dockerfile.$IMAGE" .
 }
 
 save_image() {
   ${DOCKER_CMD} save "$IMAGE_TAG" -o "${IMAGE}_${IMAGE_VERSION}_${S6_OVERLAY_ARCHITECTURE}.tar"
 }
 
+push_image() {
+  ${DOCKER_CMD} push "$IMAGE_TAG"
+}
+
 main() {
   cd "$(get_repo_root_directory)" || exit 1
   load_s6_overlay_version
   parse_command_line_arguments "$@"
+
+  # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
+  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
+
   build_image
 
   if [[ $SAVE == 'true' ]]; then
     save_image
+  fi
+
+  if [[ $PUSH == 'true' ]]; then
+    push_image
   fi
 }
 
