@@ -40,10 +40,10 @@ jobs:
           docker buildx inspect mybuilder --bootstrap
 
       - name: Build a Docker Image
-        run: ./scripts/build_image.sh -p linux/amd64 -i ubuntu -v 24.04 -a x86_64
+        run: ./scripts/build_image.sh -p linux/arm64 -i ubuntu -v 24.04 -a aarch64
 
       - name: Push the Docker Image
-        run: docker push webdavis/docker-s6-overlay:ubuntu-24.04-x86_64-3.1.6.2
+        run: docker push webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
 
       - name: Verify remote image architectures using image manifests
         run: just list-remote-image-architectures
