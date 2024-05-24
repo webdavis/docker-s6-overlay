@@ -37,7 +37,7 @@ jobs:
       - name: Bootstrap a new Docker builder instance
         run: just bootstrap-docker-builder
 
-      - name: Build and push the Docker Images
+      - name: Build and push the Docker Images and their manifests upstream
         run: just push-images-in-parallel
 
       - name: Verify remote image architectures using image manifests
