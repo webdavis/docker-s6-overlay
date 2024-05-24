@@ -11,10 +11,10 @@ alias r := list-remote-image-architectures
 alias c := clean
 
 docker-image-ls:
-    sudo docker image ls -a
+    docker image ls -a
 
 docker-ps:
-    sudo docker ps -a
+    docker ps -a
 
 bootstrap-docker-builder:
     docker buildx create --use --name mybuilder
