@@ -54,9 +54,11 @@ jobs:
       - name: Setup QEMU virtualization for multi-platform builds
         uses: docker/setup-qemu-action@v3
 
+      - name: Bootstrap a new Docker builder instance
+        run: just bootstrap-docker-builder
+
       - name: Build the Docker Images and then save them as tarballs
         run: |
-          docker buildx create --use
           ./scripts/build_image.sh \
               -p ${{ matrix.platform }} \
               -i ${{ matrix.image }} \
