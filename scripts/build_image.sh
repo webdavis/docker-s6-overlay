@@ -112,7 +112,7 @@ parse_command_line_arguments() {
   verify_script_arguments "$@"
 }
 
-build_image() {
+build_and_load_image() {
   ${DOCKER_CMD} buildx build \
       --load \
       --platform "${DOCKER_PLATFORM}" \
@@ -143,20 +143,6 @@ build_and_push_image() {
       -f "Dockerfile.$IMAGE" .
 }
 
-push_manifest() {
-  ${DOCKER_CMD} manifest create "$IMAGE_TAG" "$IMAGE_TAG"
-
-  IFS="/" read -r os arch variant <<< "$DOCKER_PLATFORM"
-
-  if [[ -n $variant ]]; then
-    ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" "$IMAGE_TAG" --os "$os" --arch "$arch" --variant "$variant"
-  else
-    ${DOCKER_CMD} manifest annotate "$IMAGE_TAG" "$IMAGE_TAG" --os "$os" --arch "$arch"
-  fi
-
-  ${DOCKER_CMD} manifest push "$IMAGE_TAG"
-}
-
 main() {
   cd "$(get_repo_root_directory)" || exit 1
   load_s6_overlay_version
@@ -167,13 +153,9 @@ main() {
 
   if [[ $PUSH == 'true' ]]; then
     build_and_push_image
-    # push_manifest
   else
-    build_image
-
-    if [[ $SAVE == 'true' ]]; then
-      save_image
-    fi
+    build_and_load_image
+    [[ $SAVE == 'true' ]] && save_image
   fi
 }
 
