@@ -114,7 +114,6 @@ parse_command_line_arguments() {
 
 build_image() {
   ${DOCKER_CMD} buildx build \
-      --provenance=mode=max \
       --load \
       --platform "${DOCKER_PLATFORM}" \
       --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
@@ -131,8 +130,16 @@ save_image() {
   chmod -R 755 "$tarball"
 }
 
-push_image() {
-  ${DOCKER_CMD} push "$IMAGE_TAG"
+build_and_push_image() {
+  ${DOCKER_CMD} buildx build \
+      --provenance=mode=max \
+      --push \
+      --platform "${DOCKER_PLATFORM}" \
+      --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
+      --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
+      --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
+      --tag "$IMAGE_TAG" \
+      -f "Dockerfile.$IMAGE" .
 }
 
 push_manifest() {
@@ -157,15 +164,15 @@ main() {
   # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
   IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
 
-  build_image
-
-  if [[ $SAVE == 'true' ]]; then
-    save_image
-  fi
-
   if [[ $PUSH == 'true' ]]; then
-    push_image
+    build_and_push_image
     push_manifest
+  else
+    build_image
+
+    if [[ $SAVE == 'true' ]]; then
+      save_image
+    fi
   fi
 }
 
