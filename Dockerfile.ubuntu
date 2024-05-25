@@ -1,26 +1,9 @@
-# Description: Runs s6 as PID 1.
-# See: https://github.com/just-containers/s6-overlay
-#
-# Run the following commands in the folder where the Dockerfile is located.
-#
-# Build the image:
-#
-#   $ sudo docker buildx build --load --platform linux/amd64 --force-rm --tag webdavis/ubuntu:24.04-s6-amd64 .
-#
-# Run the container:
-#
-#   $ sudo docker run --platform linux/amd64 -d -t \
-#           --hostname ubuntu \
-#           --name ubuntu_24.04_s6_amd64 \
-#           webdavis/ubuntu:24.04-s6-amd64
-#
-# Enter the container:
-#
-#   $ sudo docker exec -ti ubuntu_24.04_s6_amd64 /init /bin/bash -l
-
+# syntax=docker/dockerfile:1
 ARG IMAGE_VERSION
 FROM ubuntu:${IMAGE_VERSION}
 LABEL maintainer "Stephen A. Davis (webdavis)"
+LABEL org.opencontainers.image.source="https://github.com/webdavis/docker-s6-overlay"
+LABEL org.opencontainers.image.description="Docker image with s6-overlay on Ubuntu Linux"
 
 ARG S6_OVERLAY_VERSION
 ARG S6_OVERLAY_ARCHITECTURE
