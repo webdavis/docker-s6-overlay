@@ -37,7 +37,7 @@
   ],
   "alpine": [
     {
-      "version": "3.19",
+      "version": "3.20",
       "architectures": [
         "amd64",
         "arm64",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "version": "3.18",
+      "version": "3.19",
       "architectures": [
         "amd64",
         "arm64",
