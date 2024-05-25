@@ -114,6 +114,7 @@ parse_command_line_arguments() {
 
 build_image() {
   ${DOCKER_CMD} buildx build \
+      --provenance=mode=max \
       --load \
       --platform "${DOCKER_PLATFORM}" \
       --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
