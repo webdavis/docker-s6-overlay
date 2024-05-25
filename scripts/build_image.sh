@@ -134,6 +134,7 @@ build_and_push_image() {
   ${DOCKER_CMD} buildx build \
       --provenance=mode=max \
       --push \
+      --attest type=sbom \
       --platform "${DOCKER_PLATFORM}" \
       --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
       --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
@@ -166,7 +167,7 @@ main() {
 
   if [[ $PUSH == 'true' ]]; then
     build_and_push_image
-    push_manifest
+    # push_manifest
   else
     build_image
 
