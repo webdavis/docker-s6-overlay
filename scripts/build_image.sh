@@ -33,11 +33,17 @@ get_repo_root_directory() {
 }
 
 fetch_s6_overlay_version() {
-  jq -r 'values[]' "$S6_OVERLAY_VERSION_FILE"
+  local s6_overlay_version_file="$1"
+  jq -r 'values[]' "$s6_overlay_version_file"
 }
 
 verify_script_arguments() {
-  if [[ -z "$DOCKER_PLATFORM" || -z "$IMAGE" || -z "$IMAGE_VERSION" || -z "$S6_OVERLAY_ARCHITECTURE" ]]; then
+  local docker_platform="$1"
+  local image="$2"
+  local image_version="$3"
+  local s6_overlay_architecture="$4"
+
+  if [[ -z "$docker_platform" || -z "$image" || -z "$image_version" || -z "$s6_overlay_architecture" ]]; then
     printf "%s\\n" "
 ${SCRIPT_NAME}: Invalid usage
 
@@ -62,36 +68,42 @@ parse_command_line_arguments() {
   local short='p:i:v:a:such'
   local long='platform:,image:,image-version:,s6-overlay-architecture:,save,push,help'
 
-  SAVE='false'
-  PUSH='false'
+  local options
+  options="$(getopt -o "$short" --long "$long" -- "$@")"
+  eval set -- "$options"
 
-  OPTIONS="$(getopt -o "$short" --long "$long" -- "$@")"
-  eval set -- "$OPTIONS"
+  local docker_platform=""
+  local image=""
+  local image_version=""
+  local s6_overlay_architecture=""
+
+  local save='false'
+  local push='false'
 
   while true; do
     case "$1" in
       -p | --platform)
-        DOCKER_PLATFORM="$2"
+        docker_platform="$2"
         shift 2
         ;;
       -i | --image)
-        IMAGE="$2"
+        image="$2"
         shift 2
         ;;
       -v | --image-version)
-        IMAGE_VERSION="$2"
+        image_version="$2"
         shift 2
         ;;
       -a | --s6-overlay-architecture)
-        S6_OVERLAY_ARCHITECTURE="$2"
+        s6_overlay_architecture="$2"
         shift 2
         ;;
       -s | --save)
-        SAVE='true'
+        save='true'
         shift 1
         ;;
       -u | --push)
-        PUSH='true'
+        push='true'
         shift 1
         ;;
       -h | --help)
@@ -109,60 +121,78 @@ parse_command_line_arguments() {
     esac
   done
 
-  verify_script_arguments "$@"
+  verify_script_arguments "$docker_platform" "$image" "$image_version" "$s6_overlay_architecture"
+  echo "$docker_platform" "$image" "$image_version" "$s6_overlay_architecture" "$save" "$push"
 }
 
 build_and_load_image() {
-  local s6_overlay_version="$1"
+  local docker_platform="$1"
+  local image="$2"
+  local image_version="$3"
+  local s6_overlay_architecture="$4"
+  local s6_overlay_version="$5"
+  local image_tag="$6"
 
   ${DOCKER_CMD} buildx build \
       --load \
-      --platform "${DOCKER_PLATFORM}" \
-      --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
+      --platform "${docker_platform}" \
+      --build-arg IMAGE_VERSION="${image_version}" \
       --build-arg S6_OVERLAY_VERSION="${s6_overlay_version}" \
-      --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
-      --tag "$IMAGE_TAG" \
-      -f "Dockerfile.$IMAGE" .
-}
-
-save_image() {
-  local tarball="${IMAGE}_${IMAGE_VERSION}_${S6_OVERLAY_ARCHITECTURE}.tar"
-
-  ${DOCKER_CMD} save "$IMAGE_TAG" -o "$tarball"
-  chmod -R 755 "$tarball"
+      --build-arg S6_OVERLAY_ARCHITECTURE="${s6_overlay_architecture}" \
+      --tag "$image_tag" \
+      -f "Dockerfile.$image" .
 }
 
 build_and_push_image() {
-  local s6_overlay_version="$1"
+  local docker_platform="$1"
+  local image="$2"
+  local image_version="$3"
+  local s6_overlay_architecture="$4"
+  local s6_overlay_version="$5"
+  local image_tag="$6"
 
   ${DOCKER_CMD} buildx build \
       --provenance=mode=max \
       --push \
       --attest type=sbom \
-      --platform "${DOCKER_PLATFORM}" \
-      --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
+      --platform "${docker_platform}" \
+      --build-arg IMAGE_VERSION="${image_version}" \
       --build-arg S6_OVERLAY_VERSION="${s6_overlay_version}" \
-      --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
-      --tag "$IMAGE_TAG" \
-      -f "Dockerfile.$IMAGE" .
+      --build-arg S6_OVERLAY_ARCHITECTURE="${s6_overlay_architecture}" \
+      --tag "$image_tag" \
+      -f "Dockerfile.$image" .
+}
+
+save_image() {
+  local image_tag="$1"
+  local tarball="$2"
+
+  ${DOCKER_CMD} save "$image_tag" -o "$tarball"
+  chmod -R 755 "$tarball"
 }
 
 main() {
   cd "$(get_repo_root_directory)" || exit 1
 
   local s6_overlay_version
-  s6_overlay_version="$(fetch_s6_overlay_version)"
+  s6_overlay_version="$(fetch_s6_overlay_version "$S6_OVERLAY_VERSION_FILE")"
 
-  parse_command_line_arguments "$@"
+  local docker_platform image image_version s6_overlay_architecture save push
+  read -r docker_platform image image_version s6_overlay_architecture save push <<< "$(parse_command_line_arguments "$@")"
 
   # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
-  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${s6_overlay_version}"
+  local image_tag
+  image_tag="${REPO_ADDRESS}:${image}-${image_version}-${s6_overlay_architecture}-${s6_overlay_version}"
 
-  if [[ $PUSH == 'true' ]]; then
-    build_and_push_image "$s6_overlay_version"
+  if [[ $push == 'true' ]]; then
+    build_and_push_image "$docker_platform" "$image" "$image_version" "$s6_overlay_architecture" "$s6_overlay_version" "$image_tag"
   else
-    build_and_load_image "$s6_overlay_version"
-    [[ $SAVE == 'true' ]] && save_image
+    build_and_load_image "$docker_platform" "$image" "$image_version" "$s6_overlay_architecture" "$s6_overlay_version" "$image_tag"
+
+    if [[ $save == 'true' ]]; then
+      local tarball="${image}_${image_version}_${s6_overlay_architecture}.tar"
+      save_image "$image_tag" "$tarball"
+    fi
   fi
 }
 
