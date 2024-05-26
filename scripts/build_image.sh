@@ -32,8 +32,8 @@ get_repo_root_directory() {
   git rev-parse --show-toplevel
 }
 
-load_s6_overlay_version() {
-  S6_OVERLAY_VERSION="$(jq -r 'values[]' "$S6_OVERLAY_VERSION_FILE")"
+fetch_s6_overlay_version() {
+  jq -r 'values[]' "$S6_OVERLAY_VERSION_FILE"
 }
 
 verify_script_arguments() {
@@ -113,11 +113,13 @@ parse_command_line_arguments() {
 }
 
 build_and_load_image() {
+  local s6_overlay_version="$1"
+
   ${DOCKER_CMD} buildx build \
       --load \
       --platform "${DOCKER_PLATFORM}" \
       --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
-      --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
+      --build-arg S6_OVERLAY_VERSION="${s6_overlay_version}" \
       --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
       --tag "$IMAGE_TAG" \
       -f "Dockerfile.$IMAGE" .
@@ -131,13 +133,15 @@ save_image() {
 }
 
 build_and_push_image() {
+  local s6_overlay_version="$1"
+
   ${DOCKER_CMD} buildx build \
       --provenance=mode=max \
       --push \
       --attest type=sbom \
       --platform "${DOCKER_PLATFORM}" \
       --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
-      --build-arg S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}" \
+      --build-arg S6_OVERLAY_VERSION="${s6_overlay_version}" \
       --build-arg S6_OVERLAY_ARCHITECTURE="${S6_OVERLAY_ARCHITECTURE}" \
       --tag "$IMAGE_TAG" \
       -f "Dockerfile.$IMAGE" .
@@ -145,16 +149,19 @@ build_and_push_image() {
 
 main() {
   cd "$(get_repo_root_directory)" || exit 1
-  load_s6_overlay_version
+
+  local s6_overlay_version
+  s6_overlay_version="$(fetch_s6_overlay_version)"
+
   parse_command_line_arguments "$@"
 
   # Image tag example: webdavis/docker-s6-overlay:ubuntu-24.04-aarch64-3.1.6.2
-  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${S6_OVERLAY_VERSION}"
+  IMAGE_TAG="${REPO_ADDRESS}:${IMAGE}-${IMAGE_VERSION}-${S6_OVERLAY_ARCHITECTURE}-${s6_overlay_version}"
 
   if [[ $PUSH == 'true' ]]; then
-    build_and_push_image
+    build_and_push_image "$s6_overlay_version"
   else
-    build_and_load_image
+    build_and_load_image "$s6_overlay_version"
     [[ $SAVE == 'true' ]] && save_image
   fi
 }
