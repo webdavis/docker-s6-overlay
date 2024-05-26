@@ -118,7 +118,10 @@ build_images() {
     "$official_image_metadata_file" \
     "$s6_architecture_mappings_str" \
     "$platform_mappings_str" \
-    | parallel --colsep ' ' ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}" "$push_option"
+    | parallel --colsep ' ' \
+      --group \
+      --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
+      ./scripts/build_image.sh -p "{1}" -i "{2}" -v "{3}" -a "{4}" "$push_option"
 }
 
 main() {
