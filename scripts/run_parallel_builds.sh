@@ -86,6 +86,8 @@ process_images() {
   eval "$s6_architecture_mappings_str"
   eval "$platform_mappings_str"
 
+  local image image_version architectures arch platform s6_overlay_architecture
+
   jq -r '
   . as $all |
     keys[] as $image |
