@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 
+# Constant.
 IMAGE_IGNORE_LIST='moby/buildkit\|none\|tonistiigi/binfmt'
 
 function parse_command_line_arguments() {
   local short='lr'
   local long='local,remote'
 
-  local='false'
-  remote='false'
+  local options
+  options="$(getopt -o "$short" --long "$long" -- "$@")"
+  eval set -- "$options"
 
-  OPTIONS="$(getopt -o "$short" --long "$long" -- "$@")"
-
-  eval set -- "$OPTIONS"
+  local local_images='false'
+  local remote_images='false'
 
   while true; do
     case "$1" in
       -l | --local)
-        local='true'
+        local_images='true'
         shift
         ;;
       -r | --remote)
-        remote='true'
+        remote_images='true'
         shift
         ;;
       --)
@@ -30,34 +31,33 @@ function parse_command_line_arguments() {
     esac
   done
 
-  if [[ "$local" == 'false' && "$remote" == 'false' ]]; then
-    list_local_architectures
-    return
-  fi
-
-  if [[ "$local" == 'true' ]]; then
-    list_local_architectures
-  fi
-
-  if [[ "$remote" == 'true' ]]; then
-    list_remote_architectures
-  fi
+  echo "$local_images" "$remote_images"
 }
 
 get_images() {
   # Get a list of all image names on the system in repo:tag format.
-  IMAGES="$(docker image ls -a --format '{{.Repository}}:{{.Tag}}' | grep -v "$IMAGE_IGNORE_LIST")"
+  local images
+  images="$(docker image ls -a --format '{{.Repository}}:{{.Tag}}' | grep -v "$IMAGE_IGNORE_LIST")"
+  IFS=$'\n' read -r -d '' -a images < <(docker image ls -a --format '{{.Repository}}:{{.Tag}}' | grep -v "$IMAGE_IGNORE_LIST" && printf '\0')
 
-  if [[ $IMAGES == '' ]]; then
+  if [[ $images == '' ]]; then
     echo 'No images have been created.'
     exit 1
   fi
+
+  echo "${images[@]}"
 }
 
 list_local_architectures() {
+  local images="$1"
+
   local image architecture
 
-  for image in $IMAGES; do
+  echo "Local Image Architectures"
+  echo "=========================="
+  echo
+
+  for image in $images; do
     # Get image details and extract architecture.
     architecture="$(docker image inspect -f '{{ .Architecture }}{{ .Variant }}' "$image")"
 
@@ -66,13 +66,14 @@ list_local_architectures() {
 }
 
 list_remote_architectures() {
-  local image manifest architectures os arch variant formatted_architectures
+  local images="$1"
 
-  for image in $IMAGES; do
+  local image manifest architectures os arch variant output
+
+  for image in $images; do
 
     # Get manifest details and extract architectures.
     manifest="$(docker manifest inspect "$image")"
-
     if [[ $? -ne 0 ]]; then
       continue
     fi
@@ -93,12 +94,27 @@ list_remote_architectures() {
 
     output+="$image\t$architectures\n"
   done
+
+  echo "Remote Image Architectures"
+  echo "=========================="
   echo -e "$output" | column -t -s $'\t'
+  echo
 }
 
 main() {
-  get_images
-  parse_command_line_arguments "$@"
+  local images
+  images="$(get_images)"
+
+  local local_images remote_images
+  read -r local_images remote_images <<< "$(parse_command_line_arguments "$@")"
+
+  if [[ "$remote_images" == 'true' ]]; then
+    list_remote_architectures "$images"
+  fi
+
+  if [[ "$local_images" == 'true' || ($local_images == 'false' && $remote_images == 'false') ]]; then
+    list_local_architectures "$images"
+  fi
 }
 
 main "$@"
