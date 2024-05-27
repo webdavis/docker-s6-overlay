@@ -80,6 +80,7 @@ list_remote_architectures() {
     architectures=""
     while IFS= read -r entry; do
       os="$(echo "$entry" | jq -r '.platform.os')"
+      [[ $os == 'unknown' ]] && continue
       arch="$(echo "$entry" | jq -r '.platform.architecture')"
       variant="$(echo "$entry" | jq -r '.platform.variant // empty')"
 
@@ -90,9 +91,7 @@ list_remote_architectures() {
       fi
     done <<< "$(echo "$manifest" | jq -c '.manifests[]')"
 
-    formatted_architectures="$(echo "$architectures" | grep -v 'unknown' | tr '\n' ' ')"
-
-    output+="$image\t$formatted_architectures\n"
+    output+="$image\t$architectures\n"
   done
   echo -e "$output" | column -t -s $'\t'
 }
