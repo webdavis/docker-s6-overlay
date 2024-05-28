@@ -113,7 +113,7 @@ build_images() {
 
   local push_option=""
   if [[ $push == 'true' ]]; then
-    push_option="-u"
+    push_option="--push"
   fi
 
   process_images \
