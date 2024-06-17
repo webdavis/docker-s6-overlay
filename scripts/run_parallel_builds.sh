@@ -161,11 +161,12 @@ build_image() {
   IFS=',' read -r platform image image_version s6_overlay_architecture latest_digest <<< "$job"
 
   # echo "./scripts/build_image.sh -p $platform -i $image -v $image_version -a $s6_overlay_architecture $push_option"
-  ./scripts/build_image.sh -p "$platform" -i "$image" -v "$image_version" -a "$s6_overlay_architecture" "$push_option"
-
-  if (( $? == 0 )); then
-    echo "$image $image_version $latest_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
-  fi
+  ./scripts/build_image.sh \
+      -p "$platform" \
+      -i "$image" \
+      -v "$image_version" \
+      -a "$s6_overlay_architecture" "$push_option" \
+    && echo "$image $image_version $latest_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
 }
 
 create_successful_builds_tmp_file() {
