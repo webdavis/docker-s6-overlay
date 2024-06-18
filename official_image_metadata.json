@@ -2,7 +2,7 @@
   "busybox": [
     {
       "version": "1.36",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:50aa4698fa6262977cff89181b2664b99d8a56dbca847bf62f2ef04854597cf8",
       "architectures": [
         "amd64",
         "arm64",
@@ -12,7 +12,7 @@
     },
     {
       "version": "1.36-musl",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:6d9a2e77c3b19944a28c3922f5715ede91c1ae869d91edf5f6adf88ed54e97cf",
       "architectures": [
         "amd64",
         "arm64",
@@ -22,7 +22,7 @@
     },
     {
       "version": "1.36-glibc",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:50aa4698fa6262977cff89181b2664b99d8a56dbca847bf62f2ef04854597cf8",
       "architectures": [
         "amd64",
         "arm64",
@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:b9ec44e0c85c90e8d2b0924d14f9c7b660ac3e1f54ba93775ef14141b99da784",
       "architectures": [
         "amd64",
         "arm64",
@@ -42,7 +42,7 @@
   "alpine": [
     {
       "version": "3.20",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:216266c86fc4dcef5619930bd394245824c2af52fd21ba7c6fa0e618657d4c3b",
       "architectures": [
         "amd64",
         "arm64",
@@ -52,7 +52,7 @@
     },
     {
       "version": "3.19",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:6457d53fb065d6f250e1504b9bc42d5b6c65941d57532c072d929dd0628977d0",
       "architectures": [
         "amd64",
         "arm64",
@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:3963c438d67a34318a3672faa6debd1dfff48e5d52de54305988b932c61514ca",
       "architectures": [
         "amd64",
         "arm64",
@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:76f6fbfbc51a0ddd5bf711bf722c2b51a0ca9736463c30a3ed30269695f5816f",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_local_digest": "sha:00000xl",
+      "latest_local_digest": "sha256:84d83b22ba6c367e143fcb7169717d87d7f484356cf9a904f5352418981a99a3",
       "architectures": [
         "amd64",
         "arm64",
