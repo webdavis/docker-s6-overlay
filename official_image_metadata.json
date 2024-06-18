@@ -2,7 +2,7 @@
   "busybox": [
     {
       "version": "1.36",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -12,7 +12,7 @@
     },
     {
       "version": "1.36-musl",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -22,7 +22,7 @@
     },
     {
       "version": "1.36-glibc",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -42,7 +42,7 @@
   "alpine": [
     {
       "version": "3.20",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -52,7 +52,7 @@
     },
     {
       "version": "3.19",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_digest": "sha:00000xl",
+      "latest_local_digest": "sha:00000xl",
       "architectures": [
         "amd64",
         "arm64",

@@ -86,7 +86,7 @@ parse_command_line_arguments() {
   echo "$push $update"
 }
 
-get_latest_digest() {
+get_latest_digest_from_registry() {
   local image="$1"
   local image_version="$2"
   curl -s "https://hub.docker.com/v2/repositories/library/${image}/tags/${image_version}/" \
@@ -102,7 +102,7 @@ update_digest() {
     --arg image "$image" \
     --arg image_version "$image_version" \
     --arg new_sha_value "$new_sha_value" \
-    ' (.[$image][] | select(.version == $image_version) | .latest_digest) = $new_sha_value ' \
+    ' (.[$image][] | select(.version == $image_version) | .latest_local_digest) = $new_sha_value ' \
     official_image_metadata.json > tmp.json && mv tmp.json official_image_metadata.json
 }
 
@@ -120,21 +120,22 @@ queue_build_jobs() {
   json_data="$(jq -r '. as $all |
     keys[] as $image |
     $all[$image][] |
-    [ $image, .version, .latest_digest, (.architectures | join(" ")) ] |
+    [ $image, .version, .latest_local_digest, (.architectures | join(" ")) ] |
     @csv' "$official_image_metadata_file")"
 
-  local image image_version current_digest architectures arch platform s6_overlay_architecture latest_digest
+  local image image_version architectures arch platform s6_overlay_architecture
+  local latest_local_digest latest_registry_digest
 
-  while IFS=, read -r image image_version current_digest architectures; do
+  while IFS=, read -r image image_version latest_local_digest architectures; do
     image=$(tr -d '"' <<< "$image")
     image_version=$(tr -d '"' <<< "$image_version")
-    current_digest=$(tr -d '"' <<< "$current_digest")
+    latest_local_digest=$(tr -d '"' <<< "$latest_local_digest")
 
     if [[ $update == 'true' ]]; then
-      latest_digest="$(get_latest_digest "$image" "$image_version")"
+      latest_registry_digest="$(get_latest_digest_from_registry "$image" "$image_version")"
 
-      if [[ "$latest_digest" == "$current_digest" ]]; then
-        # If the digest is up-to-date then skip this build_job.
+      if [[ "$latest_registry_digest" == "$latest_local_digest" ]]; then
+        # If the locally tracked digest is up-to-date then skip this build_job.
         continue
       fi
     fi
@@ -145,7 +146,7 @@ queue_build_jobs() {
       platform=${platform_mappings[$arch]}
       s6_overlay_architecture=${s6_architecture_mappings[$arch]}
 
-      BUILD_JOBS+=("$platform,$image,$image_version,$s6_overlay_architecture,$latest_digest")
+      BUILD_JOBS+=("$platform,$image,$image_version,$s6_overlay_architecture,$latest_registry_digest")
     done
   done <<< "$json_data"
 
@@ -159,14 +160,14 @@ build_image() {
   local job="$1"
   local push_option="$2"
 
-  IFS=',' read -r platform image image_version s6_overlay_architecture latest_digest <<< "$job"
+  IFS=',' read -r platform image image_version s6_overlay_architecture latest_registry_digest <<< "$job"
 
   ./scripts/build_image.sh \
       -p "$platform" \
       -i "$image" \
       -v "$image_version" \
       -a "$s6_overlay_architecture" "$push_option" \
-    && echo "$image $image_version $latest_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
+    && echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
 }
 
 create_successful_builds_tmp_file() {
@@ -210,8 +211,8 @@ job_builder() {
       build_image {} "$PUSH_OPTION"
 
   if [[ $update == 'true' ]]; then
-    while IFS=' ' read -r image image_version latest_digest; do
-      update_digest "$image" "$image_version" "$latest_digest"
+    while IFS=' ' read -r image image_version latest_registry_digest; do
+      update_digest "$image" "$image_version" "$latest_registry_digest"
     done < "$SUCCESSFUL_BUILDS_TMP_FILE"
   fi
 }
