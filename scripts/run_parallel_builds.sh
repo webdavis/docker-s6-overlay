@@ -217,6 +217,27 @@ job_builder() {
   fi
 }
 
+function cleanup() {
+    # Capture the exit status of the last command before trap was triggered.
+    local exit_status=$?
+
+    echo 'Performing cleanup tasks...'
+
+    [[ -f "$SUCCESSFUL_BUILDS_TMP_FILE" ]] && rm "$SUCCESSFUL_BUILDS_TMP_FILE"
+
+    echo 'Cleanup complete. Exiting.'
+
+    exit $exit_status
+}
+
+function setup_signal_handling() {
+    # Handle process interruption signals.
+    trap cleanup SIGINT SIGTERM
+
+    # Handle the EXIT signal for any script termination.
+    trap cleanup EXIT
+}
+
 main() {
   setup_signal_handling
 
@@ -234,27 +255,6 @@ main() {
   IFS=' ' read -r push update <<< "$args"
 
   job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$update"
-}
-
-function setup_signal_handling() {
-    # Handle process interruption signals.
-    trap cleanup SIGINT SIGTERM
-
-    # Handle the EXIT signal for any script termination.
-    trap cleanup EXIT
-}
-
-function cleanup() {
-    # Capture the exit status of the last command before trap was triggered.
-    local exit_status=$?
-
-    echo 'Performing cleanup tasks...'
-
-    [[ -f "$SUCCESSFUL_BUILDS_TMP_FILE" ]] && rm "$SUCCESSFUL_BUILDS_TMP_FILE"
-
-    echo 'Cleanup complete. Exiting.'
-
-    exit $exit_status
 }
 
 main "$@"
