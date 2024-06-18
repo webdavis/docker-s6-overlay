@@ -12,12 +12,15 @@ help() {
     printf "%s\\n" "
 ${SCRIPT_NAME}: Package multi-platform Docker images with s6-overlay
 
-All of the following flags must be specified:
+The following flags are required:
 
     -f|--platform <platform>                                The buildx platform being used (passed to --platform)
     -i|--image <image>                                      The name of the official base image
     -v|--image-version <image_version>                      The version of the official base image
     -a|--s6-overlay-architecture <s6_overlay_architecture>  The architecture of the s6 overlay tarball. See s6_architecture_mappings.json
+
+Optional flags:
+
     -s|--save                                               Save the built docker image as a tarball
     -p|--push                                               Push the built docker image and manifest upstream
 
@@ -47,7 +50,7 @@ verify_script_arguments() {
     printf "%s\\n" "
 ${SCRIPT_NAME}: Invalid usage
 
-You must specify the following flags:
+The following flags are required:
 
     -f <platform>                (or --platform <platform>)
     -i <image>                   (or --image <image>)

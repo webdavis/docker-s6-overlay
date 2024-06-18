@@ -14,7 +14,7 @@ help() {
   printf "%s\\n" "
 ${SCRIPT_NAME}: A utility script that executes build_image.sh in parallel
 
-All of the following flags must be specified:
+Optional flags:
 
     -p|--push   Push the built docker image upstream
     -u|--update Update out of date images (checks against the baseimage's lastest SHA)
