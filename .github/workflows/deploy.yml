@@ -1,4 +1,4 @@
-name: CD - Deploy Images to Docker Hub
+name: CD - Deploy images to Docker Hub
 
 on:
   push:

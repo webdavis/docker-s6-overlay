@@ -1,4 +1,4 @@
-name: CI - Build and Test Images
+name: CI - Build and test images
 
 on: [push]
 
