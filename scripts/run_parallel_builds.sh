@@ -136,23 +136,23 @@ queue_build_jobs() {
       if [[ "$latest_digest" == "$current_digest" ]]; then
         # If the digest is up-to-date then skip this build_job.
         continue
-        fi
       fi
-
-      for arch in $architectures; do
-        arch=$(tr -d '"' <<< "$arch")
-
-        platform=${platform_mappings[$arch]}
-        s6_overlay_architecture=${s6_architecture_mappings[$arch]}
-
-        BUILD_JOBS+=("$platform,$image,$image_version,$s6_overlay_architecture,$latest_digest")
-      done
-    done <<< "$json_data"
-
-    if (( ${#BUILD_JOBS[@]} == 0 )); then
-      echo "No updates available."
-      exit 0
     fi
+
+    for arch in $architectures; do
+      arch=$(tr -d '"' <<< "$arch")
+
+      platform=${platform_mappings[$arch]}
+      s6_overlay_architecture=${s6_architecture_mappings[$arch]}
+
+      BUILD_JOBS+=("$platform,$image,$image_version,$s6_overlay_architecture,$latest_digest")
+    done
+  done <<< "$json_data"
+
+  if (( ${#BUILD_JOBS[@]} == 0 )); then
+    echo "No updates available."
+    exit 0
+  fi
 }
 
 build_image() {
