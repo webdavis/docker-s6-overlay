@@ -3,7 +3,7 @@
 # Exit immediately if a command fails.
 set -eo pipefail
 
-DOCKER_CMD='docker'
+DOCKER_CMD='sudo docker'
 REPO_ADDRESS="webdavis/docker-s6-overlay"
 S6_OVERLAY_VERSION_FILE='s6_overlay_version.json'
 SCRIPT_NAME="${BASH_SOURCE##*/}"
@@ -14,15 +14,15 @@ ${SCRIPT_NAME}: Package multi-platform Docker images with s6-overlay
 
 All of the following flags must be specified:
 
-    -p|--platform <platform>                                The buildx platform being used (passed to --platform)
+    -f|--platform <platform>                                The buildx platform being used (passed to --platform)
     -i|--image <image>                                      The name of the official base image
     -v|--image-version <image_version>                      The version of the official base image
     -a|--s6-overlay-architecture <s6_overlay_architecture>  The architecture of the s6 overlay tarball. See s6_architecture_mappings.json
     -s|--save                                               Save the built docker image as a tarball
-    -u|--push                                               Push the built docker image and manifest upstream
+    -p|--push                                               Push the built docker image and manifest upstream
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64 -s -u
+    ${SCRIPT_NAME} -f linux/amd64 -i alpine -v 3.19 -a x86_64 -s -u
 
 Example using long flags:
     ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64 --save --push"
@@ -49,13 +49,13 @@ ${SCRIPT_NAME}: Invalid usage
 
 You must specify the following flags:
 
-    -p <platform>                (or --platform <platform>)
+    -f <platform>                (or --platform <platform>)
     -i <image>                   (or --image <image>)
     -v <image_version>           (or --image-version <image_version>)
     -a <s6_overlay_architecture> (or --s6-overlay-architecture <s6_overlay_architecture>)
 
 Example using short flags:
-    ${SCRIPT_NAME} -p linux/amd64 -i alpine -v 3.19 -a x86_64
+    ${SCRIPT_NAME} -f linux/amd64 -i alpine -v 3.19 -a x86_64
 
 Example using long flags:
     ${SCRIPT_NAME} --platform linux/amd64 --image alpine --image-version 3.19 --s6-overlay-architecture x86_64
@@ -65,7 +65,7 @@ Example using long flags:
 }
 
 parse_command_line_arguments() {
-  local short='p:i:v:a:such'
+  local short='f:i:v:a:suh'
   local long='platform:,image:,image-version:,s6-overlay-architecture:,save,push,help'
 
   local options
@@ -82,7 +82,7 @@ parse_command_line_arguments() {
 
   while true; do
     case "$1" in
-      -p | --platform)
+      -f | --platform)
         docker_platform="$2"
         shift 2
         ;;
@@ -102,7 +102,7 @@ parse_command_line_arguments() {
         save='true'
         shift 1
         ;;
-      -u | --push)
+      -p | --push)
         push='true'
         shift 1
         ;;

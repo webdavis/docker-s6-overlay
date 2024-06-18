@@ -20,10 +20,10 @@ All of the following flags must be specified:
     -u|--update Update out of date images (checks against the baseimage's lastest SHA)
 
 Example using short flags:
-    ${SCRIPT_NAME} -p
+    ${SCRIPT_NAME} -u -p
 
 Example using long flags:
-    ${SCRIPT_NAME} --push"
+    ${SCRIPT_NAME} --update --push"
 }
 
 get_repo_root_directory() {
@@ -162,11 +162,11 @@ build_image() {
 
   IFS=',' read -r platform image image_version s6_overlay_architecture latest_registry_digest <<< "$job"
 
-  echo "./scripts/build_image.sh -p $platform -i $image -v $image_version -a $s6_overlay_architecture $push_option"
+  echo "./scripts/build_image.sh -f $platform -i $image -v $image_version -a $s6_overlay_architecture $push_option"
   echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
 
   # ./scripts/build_image.sh \
-  #     -p "$platform" \
+  #     -f "$platform" \
   #     -i "$image" \
   #     -v "$image_version" \
   #     -a "$s6_overlay_architecture" "$push_option" \

@@ -57,7 +57,7 @@ jobs:
       - name: Build the Docker Images and then save them as tarballs
         run: |
           ./scripts/build_image.sh \
-              -p ${{ matrix.platform }} \
+              -f ${{ matrix.platform }} \
               -i ${{ matrix.image }} \
               -v ${{ matrix.image_version }} \
               -a ${{ matrix.s6_architecture }} \
