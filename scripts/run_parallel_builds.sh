@@ -141,6 +141,7 @@ queue_build_jobs() {
 
       for arch in $architectures; do
         arch=$(tr -d '"' <<< "$arch")
+
         platform=${platform_mappings[$arch]}
         s6_overlay_architecture=${s6_architecture_mappings[$arch]}
 
