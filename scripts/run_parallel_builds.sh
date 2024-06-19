@@ -173,7 +173,7 @@ build_image() {
 create_successful_builds_tmp_file() {
   local file_basename='successful_builds'
   local tmpfile
-  tmpfile="$(mktemp -qp . -t "$file_basename")" || {
+  tmpfile="$(mktemp -qp . -t "${file_basename}.XXXXXX")" || {
     echo "Error: couldn't create $tmpfile" >&2;
     exit 1;
   }
