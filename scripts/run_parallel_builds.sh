@@ -238,6 +238,7 @@ log_successful_builds() {
   log_file="successful_builds-$(date +"%Y%m%d_%H%M%S").log"
   echo -e "Image Version Digest\n----- ------- ------" > "$log_file"
   cat "$SUCCESSFUL_BUILDS_TMP_FILE" >> "$log_file"
+  column -t "$log_file" > temp_file && mv temp_file "$log_file"
 }
 
 function cleanup() {
