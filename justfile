@@ -6,7 +6,7 @@ alias P := docker-ps
 alias B := bootstrap-docker-builder
 alias b := build-images-in-parallel
 alias p := push-images-in-parallel
-alias u := update-and-push-images-in-parallel
+alias u := upgrade-and-push-images-in-parallel
 alias l := list-local-image-architectures
 alias r := list-remote-image-architectures
 alias c := clean
@@ -27,8 +27,8 @@ build-images-in-parallel:
 push-images-in-parallel:
     ./scripts/run_parallel_builds.sh --push --log
 
-update-and-push-images-in-parallel:
-    ./scripts/run_parallel_builds.sh --update --push --log
+upgrade-and-push-images-in-parallel:
+    ./scripts/run_parallel_builds.sh --upgrade --push --log
 
 list-local-image-architectures:
     ./scripts/list_image_architectures.sh -l

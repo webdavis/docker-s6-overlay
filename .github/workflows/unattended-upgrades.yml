@@ -1,4 +1,4 @@
-name: Unattended Upgrades - Rebuild and push images if base image updates are available
+name: Unattended Upgrades - Rebuild and push images if base image upgrades are available
 
 # Scheduled for 3:00 AM MST nightly.
 on:
@@ -32,8 +32,8 @@ jobs:
       - name: Bootstrap a new Docker builder instance
         run: just bootstrap-docker-builder
 
-      - name: Rebuild and push images if base image updates are available
-        run: just update-and-push-images-in-parallel
+      - name: Rebuild and push images if base image upgrades are available
+        run: just upgrade-and-push-images-in-parallel
 
       - name: Check for changes in official_image_metadata.json
         run: |
@@ -53,4 +53,4 @@ jobs:
           git push
 
       - name: Show Successful Upgrades
-        run: cat successful_builds-*.log
+        run: cat successful_upgrades-*.log

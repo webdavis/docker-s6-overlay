@@ -17,15 +17,15 @@ ${SCRIPT_NAME}: A utility script that executes build_image.sh in parallel
 Optional flags:
 
     -p|--push    Push the built docker image upstream
-    -u|--update  Update out of date images (checks against the baseimage's lastest SHA)
-    -l|--log     Log successful updates to a timestamped successful_builds-<date>.log file
-    -v|--verbose Print successful updates to STDOUT
+    -u|--upgrade Upgrade out of date images (checks against the baseimage's lastest SHA)
+    -l|--log     Log successful upgrades to a timestamped successful_upgrades-<date>.log file
+    -v|--verbose Print successful upgrades to STDOUT
 
 Example using short flags:
     ${SCRIPT_NAME} -p -u -l -v
 
 Example using long flags:
-    ${SCRIPT_NAME} --push --update --log --verbose"
+    ${SCRIPT_NAME} --push --upgrade --log --verbose"
 }
 
 get_repo_root_directory() {
@@ -51,14 +51,14 @@ load_s6_architecture_mappings() {
 
 parse_command_line_arguments() {
   local short='pulvh'
-  local long='push,update,log,verbose,help'
+  local long='push,upgrade,log,verbose,help'
 
   local options
   options="$(getopt -o "$short" --long "$long" -- "$@")"
   eval set -- "$options"
 
   local push='false'
-  local update='false'
+  local upgrade='false'
   local log='false'
   local verbose='false'
 
@@ -68,8 +68,8 @@ parse_command_line_arguments() {
         push='true'
         shift 1
         ;;
-      -u | --update)
-        update='true'
+      -u | --upgrade)
+        upgrade='true'
         shift 1
         ;;
       -l | --log)
@@ -95,7 +95,7 @@ parse_command_line_arguments() {
     esac
   done
 
-  echo "$push $update" "$log" "$verbose"
+  echo "$push $upgrade" "$log" "$verbose"
 }
 
 get_latest_digest_from_registry() {
@@ -122,7 +122,7 @@ queue_build_jobs() {
   local official_image_metadata_file="$1"
   local s6_architecture_mappings_str="$2"
   local platform_mappings_str="$3"
-  local update="$4"
+  local upgrade="$4"
 
   # Evaluate the serialized associative arrays to deserialize them.
   eval "$s6_architecture_mappings_str"
@@ -145,7 +145,7 @@ queue_build_jobs() {
 
     latest_registry_digest="$(get_latest_digest_from_registry "$image" "$image_version")"
 
-    if [[ $update == 'true' ]]; then
+    if [[ $upgrade == 'true' ]]; then
       if [[ "$latest_registry_digest" == "$latest_local_digest" ]]; then
         # If the locally tracked digest is up-to-date then skip this build_job.
         continue
@@ -163,7 +163,7 @@ queue_build_jobs() {
   done <<< "$json_data"
 
   if (( ${#BUILD_JOBS[@]} == 0 )); then
-    echo "No updates available."
+    echo "No upgrades available."
     exit 0
   fi
 }
@@ -179,11 +179,11 @@ build_image() {
       -i "$image" \
       -v "$image_version" \
       -a "$s6_overlay_architecture" "$push_option" \
-    && echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_BUILDS_TMP_FILE"
+    && echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_UPGRADES_TMP_FILE"
 }
 
-create_successful_builds_tmp_file() {
-  local file_basename='successful_builds'
+create_successful_upgrades_tmp_file() {
+  local file_basename='successful_upgrades'
   local tmpfile
   tmpfile="$(mktemp -qp . -t "${file_basename}.XXXXXX")" || {
     echo "Error: couldn't create $tmpfile" >&2;
@@ -197,25 +197,25 @@ job_builder() {
   local s6_architecture_mappings_str="$2"
   local platform_mappings_str="$3"
   local push="$4"
-  local update="$5"
+  local upgrade="$5"
 
   PUSH_OPTION=""
   if [[ $push == 'true' ]]; then
     PUSH_OPTION="--push"
   fi
 
-  queue_build_jobs "$official_image_metadata_file" "$s6_architecture_mappings_str" "$platform_mappings_str" "$update"
+  queue_build_jobs "$official_image_metadata_file" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
 
-  SUCCESSFUL_BUILDS_TMP_FILE="$(create_successful_builds_tmp_file)"
+  SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
 
   # Export identifiers for use in subshells created by parallel.
   export PUSH_OPTION
-  export SUCCESSFUL_BUILDS_TMP_FILE
+  export SUCCESSFUL_UPGRADES_TMP_FILE
   export -f build_image
   export -f setup_signal_handling
   export -f cleanup
   export -a BUILD_JOBS
-  export -a SUCCESSFUL_BUILDS
+  export -a SUCCESSFUL_UPGRADES
 
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
@@ -225,20 +225,20 @@ job_builder() {
   if [[ $push == 'true' ]]; then
     while IFS=' ' read -r image image_version latest_registry_digest; do
       update_digest "$image" "$image_version" "$latest_registry_digest"
-    done < "$SUCCESSFUL_BUILDS_TMP_FILE"
+    done < "$SUCCESSFUL_UPGRADES_TMP_FILE"
   fi
 }
 
-print_successful_builds() {
-  (echo -e "Image Version Digest\n----- ------- ------"; cat "$SUCCESSFUL_BUILDS_TMP_FILE") \
+print_successful_upgrades() {
+  (echo -e "Image Version Digest\n----- ------- ------"; cat "$SUCCESSFUL_UPGRADES_TMP_FILE") \
     | column -t
 }
 
-log_successful_builds() {
+log_successful_upgrades() {
   local log_file
-  log_file="successful_builds-$(date +"%Y%m%d_%H%M%S").log"
+  log_file="successful_upgrades-$(date +"%Y%m%d_%H%M%S").log"
   echo -e "Image Version Digest\n----- ------- ------" > "$log_file"
-  cat "$SUCCESSFUL_BUILDS_TMP_FILE" >> "$log_file"
+  cat "$SUCCESSFUL_UPGRADES_TMP_FILE" >> "$log_file"
   column -t "$log_file" > temp_file && mv temp_file "$log_file"
 }
 
@@ -248,7 +248,7 @@ function cleanup() {
 
     echo 'Performing cleanup tasks...'
 
-    [[ -f "$SUCCESSFUL_BUILDS_TMP_FILE" ]] && rm "$SUCCESSFUL_BUILDS_TMP_FILE"
+    [[ -f "$SUCCESSFUL_UPGRADES_TMP_FILE" ]] && rm "$SUCCESSFUL_UPGRADES_TMP_FILE"
 
     echo 'Cleanup complete. Exiting.'
 
@@ -276,13 +276,13 @@ main() {
   local args
   args="$(parse_command_line_arguments "$@")"
 
-  local push update
-  IFS=' ' read -r push update log verbose <<< "$args"
+  local push upgrade
+  IFS=' ' read -r push upgrade log verbose <<< "$args"
 
-  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$update"
+  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade"
 
-  [[ "$log" == 'true' ]] && log_successful_builds
-  [[ "$verbose" == 'true' ]] && print_successful_builds
+  [[ "$log" == 'true' ]] && log_successful_upgrades
+  [[ "$verbose" == 'true' ]] && print_successful_upgrades
 }
 
 main "$@"
