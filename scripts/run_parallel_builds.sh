@@ -18,12 +18,13 @@ Optional flags:
 
     -p|--push   Push the built docker image upstream
     -u|--update Update out of date images (checks against the baseimage's lastest SHA)
+    -l|--log    Log successful updates to a timestamped successful_builds-<date>.log file
 
 Example using short flags:
-    ${SCRIPT_NAME} -u -p
+    ${SCRIPT_NAME} -p -u -l
 
 Example using long flags:
-    ${SCRIPT_NAME} --update --push"
+    ${SCRIPT_NAME} --push --update --log"
 }
 
 get_repo_root_directory() {
@@ -48,8 +49,8 @@ load_s6_architecture_mappings() {
 }
 
 parse_command_line_arguments() {
-  local short='puvh'
-  local long='push,update,verbose,help'
+  local short='pulvh'
+  local long='push,update,log,verbose,help'
 
   local options
   options="$(getopt -o "$short" --long "$long" -- "$@")"
@@ -57,6 +58,7 @@ parse_command_line_arguments() {
 
   local push='false'
   local update='false'
+  local log='false'
   local verbose='false'
 
   while true; do
@@ -67,6 +69,10 @@ parse_command_line_arguments() {
         ;;
       -u | --update)
         update='true'
+        shift 1
+        ;;
+      -l | --log)
+        log='true'
         shift 1
         ;;
       -v | --verbose)
@@ -88,7 +94,7 @@ parse_command_line_arguments() {
     esac
   done
 
-  echo "$push $update" "$verbose"
+  echo "$push $update" "$log" "$verbose"
 }
 
 get_latest_digest_from_registry() {
@@ -227,6 +233,13 @@ print_successful_builds() {
     | column -t
 }
 
+log_successful_builds() {
+  local log_file
+  log_file="successful_builds-$(date +"%Y%m%d_%H%M%S").log"
+  echo -e "Image Version Digest\n----- ------- ------" > "$log_file"
+  cat "$SUCCESSFUL_BUILDS_TMP_FILE" >> "$log_file"
+}
+
 function cleanup() {
     # Capture the exit status of the last command before trap was triggered.
     local exit_status=$?
@@ -262,10 +275,11 @@ main() {
   args="$(parse_command_line_arguments "$@")"
 
   local push update
-  IFS=' ' read -r push update verbose <<< "$args"
+  IFS=' ' read -r push update log verbose <<< "$args"
 
   job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$update"
 
+  [[ "$log" == 'true' ]] && log_successful_builds
   [[ "$verbose" == 'true' ]] && print_successful_builds
 }
 
