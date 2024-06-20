@@ -48,8 +48,8 @@ load_s6_architecture_mappings() {
 }
 
 parse_command_line_arguments() {
-  local short='puh'
-  local long='push,update,help'
+  local short='puvh'
+  local long='push,update,verbose,help'
 
   local options
   options="$(getopt -o "$short" --long "$long" -- "$@")"
@@ -57,6 +57,7 @@ parse_command_line_arguments() {
 
   local push='false'
   local update='false'
+  local verbose='false'
 
   while true; do
     case "$1" in
@@ -66,6 +67,10 @@ parse_command_line_arguments() {
         ;;
       -u | --update)
         update='true'
+        shift 1
+        ;;
+      -v | --verbose)
+        verbose='true'
         shift 1
         ;;
       -h | --help)
@@ -83,7 +88,7 @@ parse_command_line_arguments() {
     esac
   done
 
-  echo "$push $update"
+  echo "$push $update" "$verbose"
 }
 
 get_latest_digest_from_registry() {
@@ -217,6 +222,11 @@ job_builder() {
   fi
 }
 
+print_successful_builds() {
+  (echo -e "Image Version Digest\n----- ------- ------"; cat "$SUCCESSFUL_BUILDS_TMP_FILE") \
+    | column -t
+}
+
 function cleanup() {
     # Capture the exit status of the last command before trap was triggered.
     local exit_status=$?
@@ -252,9 +262,11 @@ main() {
   args="$(parse_command_line_arguments "$@")"
 
   local push update
-  IFS=' ' read -r push update <<< "$args"
+  IFS=' ' read -r push update verbose <<< "$args"
 
   job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$update"
+
+  [[ "$verbose" == 'true' ]] && print_successful_builds
 }
 
 main "$@"
