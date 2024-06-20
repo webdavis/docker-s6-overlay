@@ -131,9 +131,9 @@ queue_build_jobs() {
     image_version=$(tr -d '"' <<< "$image_version")
     latest_local_digest=$(tr -d '"' <<< "$latest_local_digest")
 
-    if [[ $update == 'true' ]]; then
-      latest_registry_digest="$(get_latest_digest_from_registry "$image" "$image_version")"
+    latest_registry_digest="$(get_latest_digest_from_registry "$image" "$image_version")"
 
+    if [[ $update == 'true' ]]; then
       if [[ "$latest_registry_digest" == "$latest_local_digest" ]]; then
         # If the locally tracked digest is up-to-date then skip this build_job.
         continue
@@ -210,7 +210,7 @@ job_builder() {
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
       build_image {} "$PUSH_OPTION"
 
-  if [[ $update == 'true' ]]; then
+  if [[ $push == 'true' ]]; then
     while IFS=' ' read -r image image_version latest_registry_digest; do
       update_digest "$image" "$image_version" "$latest_registry_digest"
     done < "$SUCCESSFUL_BUILDS_TMP_FILE"

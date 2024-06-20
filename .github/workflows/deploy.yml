@@ -33,3 +33,20 @@ jobs:
 
       - name: Build and push the Docker Images and their manifests upstream
         run: just push-images-in-parallel
+
+      - name: Check for changes in official_image_metadata.json
+        run: |
+          if git diff --name-only | grep -q "official_image_metadata.json"; then
+            echo "changes=true" >> $GITHUB_ENV
+          else
+            echo "changes=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and push changes if official_image_metadata.json is updated
+        if: env.changes == 'true'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add official_image_metadata.json
+          git commit -m "deploy: updated official_image_metadata.json"
+          git push
