@@ -50,3 +50,6 @@ jobs:
           git add official_image_metadata.json
           git commit -m "deploy: updated official_image_metadata.json"
           git push
+
+      - name: Show Successful Deploys
+        run: cat successful_builds-*.log

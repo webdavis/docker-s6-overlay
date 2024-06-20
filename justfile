@@ -25,10 +25,10 @@ build-images-in-parallel:
     ./scripts/run_parallel_builds.sh
 
 push-images-in-parallel:
-    ./scripts/run_parallel_builds.sh --push
+    ./scripts/run_parallel_builds.sh --push --log
 
 update-and-push-images-in-parallel:
-    ./scripts/run_parallel_builds.sh --update --push
+    ./scripts/run_parallel_builds.sh --update --push --log
 
 list-local-image-architectures:
     ./scripts/list_image_architectures.sh -l
