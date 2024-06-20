@@ -16,15 +16,16 @@ ${SCRIPT_NAME}: A utility script that executes build_image.sh in parallel
 
 Optional flags:
 
-    -p|--push   Push the built docker image upstream
-    -u|--update Update out of date images (checks against the baseimage's lastest SHA)
-    -l|--log    Log successful updates to a timestamped successful_builds-<date>.log file
+    -p|--push    Push the built docker image upstream
+    -u|--update  Update out of date images (checks against the baseimage's lastest SHA)
+    -l|--log     Log successful updates to a timestamped successful_builds-<date>.log file
+    -v|--verbose Print successful updates to STDOUT
 
 Example using short flags:
-    ${SCRIPT_NAME} -p -u -l
+    ${SCRIPT_NAME} -p -u -l -v
 
 Example using long flags:
-    ${SCRIPT_NAME} --push --update --log"
+    ${SCRIPT_NAME} --push --update --log --verbose"
 }
 
 get_repo_root_directory() {
