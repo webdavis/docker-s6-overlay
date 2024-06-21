@@ -215,7 +215,6 @@ job_builder() {
   export -f setup_signal_handling
   export -f cleanup
   export -a BUILD_JOBS
-  export -a SUCCESSFUL_UPGRADES
 
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
