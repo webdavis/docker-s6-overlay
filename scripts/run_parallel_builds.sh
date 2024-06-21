@@ -275,13 +275,18 @@ main() {
   local args
   args="$(parse_command_line_arguments "$@")"
 
-  local push upgrade
+  local push upgrade log verbose
   IFS=' ' read -r push upgrade log verbose <<< "$args"
 
   job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade"
 
-  [[ "$log" == 'true' ]] && log_successful_upgrades
-  [[ "$verbose" == 'true' ]] && print_successful_upgrades
+  if [[ "$log" == 'true' ]]; then
+    log_successful_upgrades
+  fi
+
+  if [[ "$verbose" == 'true' ]]; then
+    print_successful_upgrades
+  fi
 }
 
 main "$@"
