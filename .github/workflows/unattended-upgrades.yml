@@ -53,4 +53,4 @@ jobs:
           git push
 
       - name: Show Successful Upgrades
-        run: cat successful_upgrades-*.log
+        run: find . -maxdepth 1 -name "successful_upgrades-*.log" -exec cat {} +
