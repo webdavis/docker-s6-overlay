@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM alpine:latest as builder
+FROM alpine:latest AS builder
 LABEL maintainer="Stephen A. Davis (webdavis)"
 LABEL org.opencontainers.image.source="https://github.com/webdavis/docker-s6-overlay"
 LABEL org.opencontainers.image.description="Docker image with s6-overlay on Busybox"
