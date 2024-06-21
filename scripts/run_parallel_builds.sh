@@ -171,7 +171,6 @@ queue_build_jobs() {
 build_image() {
   local job="$1"
   local push_option="$2"
-  local successful_upgrades_tmp_file="$3"
 
   IFS=',' read -r platform image image_version s6_overlay_architecture latest_registry_digest <<< "$job"
 
@@ -180,7 +179,7 @@ build_image() {
       -i "$image" \
       -v "$image_version" \
       -a "$s6_overlay_architecture" "$push_option" \
-    && echo "$image $image_version $latest_registry_digest" >> "$successful_upgrades_tmp_file"
+    && echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_UPGRADES_TMP_FILE"
 }
 
 create_successful_upgrades_tmp_file() {
@@ -221,30 +220,25 @@ job_builder() {
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
-      build_image {} "$PUSH_OPTION" "$SUCCESSFUL_UPGRADES_TMP_FILE"
+      build_image {} "$PUSH_OPTION"
 
   if [[ $push == 'true' ]]; then
     while IFS=' ' read -r image image_version latest_registry_digest; do
       update_digest "$image" "$image_version" "$latest_registry_digest"
     done < "$SUCCESSFUL_UPGRADES_TMP_FILE"
   fi
-
-  echo "$SUCCESSFUL_UPGRADES_TMP_FILE"
 }
 
 print_successful_upgrades() {
-  local successful_upgrades_tmp_file="$1"
-  (echo -e "Image Version Digest\n----- ------- ------"; cat "$successful_upgrades_tmp_file") \
+  (echo -e "Image Version Digest\n----- ------- ------"; cat "$SUCCESSFUL_UPGRADES_TMP_FILE") \
     | column -t
 }
 
 log_successful_upgrades() {
-  local successful_upgrades_tmp_file="$1"
-
   local log_file
   log_file="successful_upgrades-$(date +"%Y%m%d_%H%M%S").log"
   echo -e "Image Version Digest\n----- ------- ------" > "$log_file"
-  cat "$successful_upgrades_tmp_file" >> "$log_file"
+  cat "$SUCCESSFUL_UPGRADES_TMP_FILE" >> "$log_file"
   column -t "$log_file" > temp_file && mv temp_file "$log_file"
 }
 
@@ -285,11 +279,10 @@ main() {
   local push upgrade
   IFS=' ' read -r push upgrade log verbose <<< "$args"
 
-  local successful_upgrades_tmp_file
-  successful_upgrades_tmp_file="$(job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade")"
+  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade"
 
-  [[ "$log" == 'true' ]] && log_successful_upgrades "$successful_upgrades_tmp_file"
-  [[ "$verbose" == 'true' ]] && print_successful_upgrades "$successful_upgrades_tmp_file"
+  [[ "$log" == 'true' ]] && log_successful_upgrades
+  [[ "$verbose" == 'true' ]] && print_successful_upgrades
 }
 
 main "$@"
