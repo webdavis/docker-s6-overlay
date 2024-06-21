@@ -17,7 +17,7 @@ ${SCRIPT_NAME}: A utility script that executes build_image.sh in parallel
 Optional flags:
 
     -p|--push    Push the built docker image upstream
-    -u|--upgrade Upgrade out of date images (checks against the baseimage's lastest SHA)
+    -u|--upgrade ONLY upgrade out of date images (checks against the baseimage's lastest SHA)
     -l|--log     Log successful upgrades to a timestamped successful_upgrades-<date>.log file
     -v|--verbose Print successful upgrades to STDOUT
 
