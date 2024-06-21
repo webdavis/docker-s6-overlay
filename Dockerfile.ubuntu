@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG IMAGE_VERSION
 FROM ubuntu:${IMAGE_VERSION}
-LABEL maintainer "Stephen A. Davis (webdavis)"
+LABEL maintainer="Stephen A. Davis (webdavis)"
 LABEL org.opencontainers.image.source="https://github.com/webdavis/docker-s6-overlay"
 LABEL org.opencontainers.image.description="Docker image with s6-overlay on Ubuntu Linux"
 
