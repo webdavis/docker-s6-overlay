@@ -53,4 +53,5 @@ jobs:
           git push
 
       - name: Show Successful Upgrades
+        if: env.changes == 'true'
         run: find . -maxdepth 1 -name "successful_upgrades-*.log" -exec cat {} +
