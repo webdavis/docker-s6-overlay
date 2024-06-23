@@ -192,6 +192,12 @@ create_successful_upgrades_tmp_file() {
   echo "$tmpfile"
 }
 
+process_upgrades() {
+  while IFS=' ' read -r image image_version latest_registry_digest; do
+    update_digest "$image" "$image_version" "$latest_registry_digest"
+  done < "$SUCCESSFUL_UPGRADES_TMP_FILE"
+}
+
 job_builder() {
   local official_image_metadata_file="$1"
   local s6_architecture_mappings_str="$2"
@@ -214,9 +220,7 @@ job_builder() {
       build_image {} "$PUSH_OPTION"
 
   if [[ $push == 'true' ]]; then
-    while IFS=' ' read -r image image_version latest_registry_digest; do
-      update_digest "$image" "$image_version" "$latest_registry_digest"
-    done < "$SUCCESSFUL_UPGRADES_TMP_FILE"
+    process_upgrades
   fi
 }
 
