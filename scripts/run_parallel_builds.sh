@@ -192,13 +192,6 @@ create_successful_upgrades_tmp_file() {
 }
 
 job_builder() {
-  local official_image_metadata_file="$1"
-  local s6_architecture_mappings_str="$2"
-  local platform_mappings_str="$3"
-  local upgrade="$4"
-
-  queue_build_jobs "$official_image_metadata_file" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
-
   SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
 
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
@@ -279,7 +272,9 @@ main() {
     PUSH_OPTION="--push"
   fi
 
-  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
+  queue_build_jobs "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
+
+  job_builder
 
   if [[ $push == 'true' ]]; then
     process_upgrades
