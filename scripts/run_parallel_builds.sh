@@ -191,7 +191,7 @@ create_successful_upgrades_tmp_file() {
   echo "$tmpfile"
 }
 
-job_builder() {
+run_parallel_builds() {
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
@@ -274,7 +274,7 @@ main() {
 
   SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
 
-  job_builder
+  run_parallel_builds
 
   if [[ $push == 'true' ]]; then
     process_upgrades
