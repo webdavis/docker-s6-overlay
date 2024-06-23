@@ -192,8 +192,6 @@ create_successful_upgrades_tmp_file() {
 }
 
 job_builder() {
-  SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
-
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
@@ -273,6 +271,8 @@ main() {
   fi
 
   queue_build_jobs "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
+
+  SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
 
   job_builder
 
