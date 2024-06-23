@@ -192,6 +192,16 @@ create_successful_upgrades_tmp_file() {
   echo "$tmpfile"
 }
 
+export_identifiers() {
+  # Export identifiers for use in subshells created by parallel.
+  export PUSH_OPTION
+  export SUCCESSFUL_UPGRADES_TMP_FILE
+  export -f build_image
+  export -f setup_signal_handling
+  export -f cleanup
+  export -a BUILD_JOBS
+}
+
 job_builder() {
   local official_image_metadata_file="$1"
   local s6_architecture_mappings_str="$2"
@@ -208,13 +218,7 @@ job_builder() {
 
   SUCCESSFUL_UPGRADES_TMP_FILE="$(create_successful_upgrades_tmp_file)"
 
-  # Export identifiers for use in subshells created by parallel.
-  export PUSH_OPTION
-  export SUCCESSFUL_UPGRADES_TMP_FILE
-  export -f build_image
-  export -f setup_signal_handling
-  export -f cleanup
-  export -a BUILD_JOBS
+  export_identifiers
 
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
