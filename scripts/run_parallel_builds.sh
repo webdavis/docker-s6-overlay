@@ -218,10 +218,6 @@ job_builder() {
       --group \
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
       build_image {} "$PUSH_OPTION"
-
-  if [[ $push == 'true' ]]; then
-    process_upgrades
-  fi
 }
 
 print_successful_upgrades() {
@@ -287,6 +283,10 @@ main() {
   IFS=' ' read -r push upgrade log verbose <<< "$args"
 
   job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade"
+
+  if [[ $push == 'true' ]]; then
+    process_upgrades
+  fi
 
   if [[ "$log" == 'true' ]]; then
     log_successful_upgrades
