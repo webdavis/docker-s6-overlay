@@ -262,8 +262,6 @@ main() {
 
   cd "$(get_repo_root_directory)" || exit 1
 
-  export_identifiers
-
   local mappings
   mappings="$(load_s6_architecture_mappings "$S6_ARCHITECTURE_MAPPINGS_FILE")"
   s6_architecture_mappings_str="$(echo "$mappings" | head -n 1)"
@@ -274,6 +272,8 @@ main() {
 
   local push upgrade log verbose
   IFS=' ' read -r push upgrade log verbose <<< "$args"
+
+  export_identifiers
 
   if [[ $push == 'true' ]]; then
     PUSH_OPTION="--push"
