@@ -170,7 +170,6 @@ queue_build_jobs() {
 
 build_image() {
   local job="$1"
-  local push_option="$2"
 
   IFS=',' read -r platform image image_version s6_overlay_architecture latest_registry_digest <<< "$job"
 
@@ -178,7 +177,7 @@ build_image() {
       -f "$platform" \
       -i "$image" \
       -v "$image_version" \
-      -a "$s6_overlay_architecture" "$push_option" \
+      -a "$s6_overlay_architecture" "$PUSH_OPTION" \
     && echo "$image $image_version $latest_registry_digest" >> "$SUCCESSFUL_UPGRADES_TMP_FILE"
 }
 
@@ -202,13 +201,7 @@ job_builder() {
   local official_image_metadata_file="$1"
   local s6_architecture_mappings_str="$2"
   local platform_mappings_str="$3"
-  local push="$4"
-  local upgrade="$5"
-
-  PUSH_OPTION=""
-  if [[ $push == 'true' ]]; then
-    PUSH_OPTION="--push"
-  fi
+  local upgrade="$4"
 
   queue_build_jobs "$official_image_metadata_file" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
 
@@ -217,7 +210,7 @@ job_builder() {
   printf "%s\n" "${BUILD_JOBS[@]}" | parallel --colsep ' ' \
       --group \
       --tagstring 'CORE #{%}﹕{2}-{3}-{4}' \
-      build_image {} "$PUSH_OPTION"
+      build_image {}
 }
 
 print_successful_upgrades() {
@@ -256,7 +249,7 @@ function setup_signal_handling() {
 
 export_identifiers() {
   # Export identifiers for use in subshells created by parallel.
-  export PUSH_OPTION
+  export PUSH_OPTION=""
   export SUCCESSFUL_UPGRADES_TMP_FILE
   export -f build_image
   export -f setup_signal_handling
@@ -282,7 +275,11 @@ main() {
   local push upgrade log verbose
   IFS=' ' read -r push upgrade log verbose <<< "$args"
 
-  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$push" "$upgrade"
+  if [[ $push == 'true' ]]; then
+    PUSH_OPTION="--push"
+  fi
+
+  job_builder "$OFFICIAL_IMAGE_METADATA_FILE" "$s6_architecture_mappings_str" "$platform_mappings_str" "$upgrade"
 
   if [[ $push == 'true' ]]; then
     process_upgrades
