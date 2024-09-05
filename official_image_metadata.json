@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:cf744e88c8b9dc78fdaf4392034c6306fdb4792f89ee929f0b2b353954ed039f",
+      "latest_local_digest": "sha256:7f9aeacd6d49c48e2c14ac4c035a30da0a1d100a5d87387f4d0289d16c03801b",
       "architectures": [
         "amd64",
         "arm64",
@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_local_digest": "sha256:69af26f9843be43dc53ec473972fb9176a1d50551c1dc0a80662ddeb1cb809f7",
+      "latest_local_digest": "sha256:3521cd844df5a6f3fd71217af1fc8222db5a7138a753eef86a0550d153184cdf",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_local_digest": "sha256:70d4c04302bdcd71c4fa21b6c12e99888380a07f04e3d44452b961bca046489d",
+      "latest_local_digest": "sha256:903d3225acecaa272bbdd7273c6c312c2af8b73644058838d23a8c9e6e5c82cf",
       "architectures": [
         "amd64",
         "arm64",
