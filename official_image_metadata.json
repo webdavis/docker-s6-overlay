@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:802f152063e894f4ecaff794093fae425f1be2132ddeaecb723de8add8b9f9f1",
+      "latest_local_digest": "sha256:9ab1b15fddc4dad67db5c43bbc11329f15265632a304cb048ac4a3504f1ce686",
       "architectures": [
         "amd64",
         "arm64",
@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_local_digest": "sha256:77d57fd89366f7d16615794a5b53e124d742404e20f035c22032233f1826bd6a",
+      "latest_local_digest": "sha256:74f92a6b3589aa5cac6028719aaac83de4037bad4371ae79ba362834389035aa",
       "architectures": [
         "amd64",
         "arm64",
