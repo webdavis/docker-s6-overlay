@@ -2,7 +2,7 @@
   "busybox": [
     {
       "version": "1.36",
-      "latest_local_digest": "sha256:0742518c1e8f62377554162052665c0ed370594dd0e05f55ac11e651d487367d",
+      "latest_local_digest": "sha256:0f6ad62ff602c09f8bdabbfca1facc086534bd8fd7ee74169698145be6eb48d0",
       "architectures": [
         "amd64",
         "arm64",
@@ -12,7 +12,7 @@
     },
     {
       "version": "1.36-musl",
-      "latest_local_digest": "sha256:69aa596328c134334f580e6c733d59956d23dab2386dde3f4b924e41eb758d7a",
+      "latest_local_digest": "sha256:13b3d1b607cd9df555857ed99cf86e0677d29e93ee9b3e4ed7e549a09e252b69",
       "architectures": [
         "amd64",
         "arm64",
@@ -22,7 +22,7 @@
     },
     {
       "version": "1.36-glibc",
-      "latest_local_digest": "sha256:941191fd266c5caa7b63ecb9159d3ec49084d7341efb397df3ae024ad7be6976",
+      "latest_local_digest": "sha256:afa67e3cea50ce204060a6c0113bd63cb289cc0f555d5a80a3bb7c0f62b95add",
       "architectures": [
         "amd64",
         "arm64",
@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:47e98d07f45a5f54c6a75e1de054221a70075105e2b6348c96387cee6d713a52",
+      "latest_local_digest": "sha256:586e60d3254a66888859449256e75fea4a37715f3e69f17dbc8183b7d104103e",
       "architectures": [
         "amd64",
         "arm64",
@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_local_digest": "sha256:1d6a87f65d816d20c735234d8bc7393be525d154a74e3fa139fc6770b00ded63",
+      "latest_local_digest": "sha256:b3fff181c11fe2a01f3971a784365acc068324ae4b176d78e34cc39277a632d8",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_local_digest": "sha256:273c4267223752a058c730533a8b9a5e1c44b213674f258b76fd1135fc87fdd2",
+      "latest_local_digest": "sha256:0384a015f815540574574d4d9b926ee86449b2b389d7aa58ddedb99d2677ec83",
       "architectures": [
         "amd64",
         "arm64",
