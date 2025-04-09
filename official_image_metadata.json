@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_local_digest": "sha256:a3f23b6e99cee41b8fffbd8a22d75728bb1f06af30fc79f533f27c096eda8993",
+      "latest_local_digest": "sha256:8fe30db6f4cded743d10faed55c5b7d1c49b3a56b55967923fd738e66153e5a0",
       "architectures": [
         "amd64",
         "arm64",
