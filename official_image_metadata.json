@@ -2,7 +2,7 @@
   "busybox": [
     {
       "version": "1.36",
-      "latest_local_digest": "sha256:9502dfa32164770e93457e644be72d1f209749eac0c2a9e7f49b68ddacc70bb2",
+      "latest_local_digest": "sha256:8cac9c34e220de273cc3f255b4472cdb639d59fe848f51df8d7d5ddd3dbd378e",
       "architectures": [
         "amd64",
         "arm64",
@@ -22,7 +22,7 @@
     },
     {
       "version": "1.36-glibc",
-      "latest_local_digest": "sha256:03308a43ee14f4c787936238e25458719b312dc7f0ede697a17fb36c41d31ca8",
+      "latest_local_digest": "sha256:8cac9c34e220de273cc3f255b4472cdb639d59fe848f51df8d7d5ddd3dbd378e",
       "architectures": [
         "amd64",
         "arm64",
@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:f5855e3cdbaa7b403d8232e5a95c3ca327031d2c67a0fb0dfea1f791f5e9fd57",
+      "latest_local_digest": "sha256:2dca49b989c8d5f7711a0b67a55dfc4026e15a352bb69ea4d6916857fef06cd0",
       "architectures": [
         "amd64",
         "arm64",
