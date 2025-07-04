@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:2dca49b989c8d5f7711a0b67a55dfc4026e15a352bb69ea4d6916857fef06cd0",
+      "latest_local_digest": "sha256:23bc5e7f8d62948c998cc645f5ff3525ad2f1dd0aa685d0a27e46c861c5213f9",
       "architectures": [
         "amd64",
         "arm64",
