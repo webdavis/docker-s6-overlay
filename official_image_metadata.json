@@ -42,7 +42,7 @@
   "alpine": [
     {
       "version": "3.20",
-      "latest_local_digest": "sha256:673057499937dcd5e346ecdef5b60ac6b9ec208a03d3d2d202ba132a4b271588",
+      "latest_local_digest": "sha256:f25ebd2af60b9de8e26e5100fe6f493beb81bff010f27e84f223ad19886a78f0",
       "architectures": [
         "amd64",
         "arm64",
@@ -52,7 +52,7 @@
     },
     {
       "version": "3.19",
-      "latest_local_digest": "sha256:06793e3dc83d9a0733c70010283ed1735ff75fc0d40e3eac330aaef41a2f5049",
+      "latest_local_digest": "sha256:cc5c89e0981cd165d5fca56a4fea9de734e76800c61df61b61c52cc041a81f1b",
       "architectures": [
         "amd64",
         "arm64",
@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_local_digest": "sha256:57c1ca3175929bb17d8fc8b6847e7751aedae98fe21d41b418083083b3793418",
+      "latest_local_digest": "sha256:4f1db91d9560cf107b5832c0761364ec64f46777aa4ec637cca3008f287c975e",
       "architectures": [
         "amd64",
         "arm64",
