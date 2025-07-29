@@ -12,7 +12,7 @@
     },
     {
       "version": "1.36-musl",
-      "latest_local_digest": "sha256:5650ff298e687f3ce9573bb63c1fa141a6470c0b48921885aaee7f7c6c815a15",
+      "latest_local_digest": "sha256:364964b70117a588cd442ad7136b11a1f1f3361bc85a2d6101fb5cad1edb5ab0",
       "architectures": [
         "amd64",
         "arm64",
