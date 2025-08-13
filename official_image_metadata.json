@@ -64,7 +64,7 @@
   "ubuntu": [
     {
       "version": "24.04",
-      "latest_local_digest": "sha256:4f1db91d9560cf107b5832c0761364ec64f46777aa4ec637cca3008f287c975e",
+      "latest_local_digest": "sha256:35f3a8badf2f74c1b320a643b343536f5132f245cbefc40ef802b6203a166d04",
       "architectures": [
         "amd64",
         "arm64",
@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_local_digest": "sha256:06adcd002b8d0c342b5997cea1a3015822dedf214f43d0d8e28fbf9578973505",
+      "latest_local_digest": "sha256:40d2cfd4c196e9290a26ec34beadd0f24e54284b1cef99abac608460a8e7247c",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_local_digest": "sha256:9852c9b122fa2dce95ea33a096292ce649a12a7ff321a6a6f1a40eca4989a9fc",
+      "latest_local_digest": "sha256:cea2634840f5a87503d8210e4df97b9f23a2acd67ff860a76c133d963032f866",
       "architectures": [
         "amd64",
         "arm64",
