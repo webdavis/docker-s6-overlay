@@ -42,7 +42,7 @@
   "alpine": [
     {
       "version": "3.20",
-      "latest_local_digest": "sha256:f25ebd2af60b9de8e26e5100fe6f493beb81bff010f27e84f223ad19886a78f0",
+      "latest_local_digest": "sha256:008827ed2172a676b08121e21cf9db0ce08a90ee6c8a12fc374af8a56c0e496d",
       "architectures": [
         "amd64",
         "arm64",
@@ -52,7 +52,7 @@
     },
     {
       "version": "3.19",
-      "latest_local_digest": "sha256:cc5c89e0981cd165d5fca56a4fea9de734e76800c61df61b61c52cc041a81f1b",
+      "latest_local_digest": "sha256:b58899f069c47216f6002a6850143dc6fae0d35eb8b0df9300bbe6327b9c2171",
       "architectures": [
         "amd64",
         "arm64",
