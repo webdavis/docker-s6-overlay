@@ -75,7 +75,7 @@
   "debian": [
     {
       "version": "12",
-      "latest_local_digest": "sha256:ba3344ad4f96732518a96c041b464360e68fd04e8a53087c2627392abe3fbb30",
+      "latest_local_digest": "sha256:0f112dd6b85a0fccd9d43465a0a32b6ad427f2d337f00a03b6a65f229e64e959",
       "architectures": [
         "amd64",
         "arm64",
@@ -84,7 +84,7 @@
     },
     {
       "version": "12-slim",
-      "latest_local_digest": "sha256:48fa1e32d5ad897f7748b4b67d1ffb9e2ec46f4129f037afa3456a99f937203a",
+      "latest_local_digest": "sha256:3fc563f538cf97e350bb04f43ad234c5b100aa602cced60cd36d482336d45fd5",
       "architectures": [
         "amd64",
         "arm64",
