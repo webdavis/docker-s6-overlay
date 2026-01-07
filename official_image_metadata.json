@@ -12,7 +12,7 @@
     },
     {
       "version": "1.36-musl",
-      "latest_local_digest": "sha256:669728875e07fc367636aad3b2e97ca3060c4d669dcbfda9e2f730771b6b7020",
+      "latest_local_digest": "sha256:458d5b2bdc8f9d22ac539cc8d4d9a5b78e2fe9d03387e5d5e3022f0f074995cb",
       "architectures": [
         "amd64",
         "arm64",
@@ -31,7 +31,7 @@
     },
     {
       "version": "1.36-uclibc",
-      "latest_local_digest": "sha256:16b0e850c3a5e44946234502db326becb5a9075115e952af7d24736448b93f92",
+      "latest_local_digest": "sha256:88a294e4fd268939a8d5126d82203d4315debb4550c9a7bcdeb8c4e95cd5e531",
       "architectures": [
         "amd64",
         "arm64",
